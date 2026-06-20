@@ -613,8 +613,9 @@
             </template>
             <div class="plan-selector-body">
                 <div v-for="(plan, id) in allPlansListRef" :key="id"
-                     class="plan-list-item" :class="{ active: currentPlanIdVal === id }">
-                    <div class="plan-info" @click="doLoadPlan(id)">
+                     class="plan-list-item" :class="{ active: currentPlanIdVal === id }"
+                     @click="doLoadPlan(id)">
+                    <div class="plan-info">
                         <div class="plan-info-name">{{ plan.name }}</div>
                         <div class="plan-info-meta">
                             {{ plan.groups?.length || 0 }} 個群組 · {{ plan.groups?.reduce((s,g) => s + g.places.length, 0) || 0 }} 地點
@@ -622,9 +623,9 @@
                         </div>
                     </div>
                     <div class="plan-actions">
-                        <button class="plan-load-btn" @click="doLoadPlan(id)">載入</button>
+                        <button class="plan-load-btn" @click.stop="doLoadPlan(id)">載入</button>
                         <button class="plan-download-btn" @click.stop="downloadPlanData(plan)">📥</button>
-                        <button class="plan-delete-btn" @click="doDeletePlan(id)" v-if="Object.keys(allPlansObjRef).length > 1">刪除</button>
+                        <button class="plan-delete-btn" @click.stop="doDeletePlan(id)" v-if="Object.keys(allPlansObjRef).length > 1">刪除</button>
                     </div>
                 </div>
                 <div class="plan-list-empty" v-if="!allPlansListRef || allPlansListRef.length === 0">
