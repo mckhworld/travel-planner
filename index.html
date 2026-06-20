@@ -13,6 +13,49 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; height: 100vh; overflow: hidden; }
         #app { display: flex; height: 100%; position: relative; }
+        /* ===== TOP HEADER BAR ===== */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 52px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            z-index: 1005;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .top-header .hamburger-icon {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 8px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .top-header .app-title {
+            font-size: 16px;
+            font-weight: 600;
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .top-header .plan-name {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
         #sidebar { width: 400px; background: #f8f9fa; border-right: 1px solid #dee2e6; overflow-y: auto; display: flex; flex-direction: column; position: relative; z-index: 10; }
         #sidebar-header { padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
         #sidebar-header h1 { font-size: 18px; margin-bottom: 8px; }
@@ -112,7 +155,7 @@
         /* ===== MOBILE VIEW ===== */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            #app { flex-direction: column; height: 100vh; overflow: hidden; }
+            #app { flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
             
             /* Hide sidebar by default, show as overlay */
             #sidebar {
@@ -129,37 +172,25 @@
             #sidebar:not(.mobile-open) { transform: translateX(-100%); }
             #sidebar.mobile-open { transform: translateX(0); }
             
-            /* Hamburger button */
-            .hamburger-btn {
-                display: block;
-                position: fixed;
-                top: 12px;
-                left: 12px;
-                z-index: 1000;
-                width: 44px;
-                height: 44px;
-                background: white;
-                border: none;
-                border-radius: 12px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-                font-size: 22px;
-                cursor: pointer;
-                padding: 10px;
+            /* Sidebar accounts for header bar height */
+            #sidebar {
+                top: 52px;
+                height: calc(100vh - 52px);
             }
             
-            /* Map takes full screen on mobile */
-            #map { flex: 1; height: 100vh; width: 100%; z-index: 1000; }
+            /* Map below header bar */
+            #map { flex: 1; height: calc(100vh - 52px); width: 100%; margin-top: 52px; z-index: 1000; }
             /* Map must be above detail panel during pick mode */
             #map.pick-mode { z-index: 1003; }
             
-            /* Detail panel slides from top on mobile */
+            /* Detail panel slides from top on mobile (below header) */
             #detail-panel {
                 position: fixed;
-                top: 0;
+                top: 52px;
                 left: 0;
                 width: 100%;
                 height: auto;
-                max-height: 60vh;
+                max-height: calc(60vh - 52px);
                 z-index: 1001;
                 transform: translateY(-100%);
                 transition: transform 0.3s ease;
@@ -173,11 +204,11 @@
             /* Map must be above detail panel for click-to-pick */
             #map { z-index: 1000; }
             
-            /* Emoji picker on mobile */
+            /* Emoji picker on mobile (below header) */
             .emoji-picker-panel {
                 left: 0;
                 width: 100%;
-                top: 60vh;
+                top: calc(60vh + 52px);
                 transform: translateY(100%);
                 z-index: 1002;
                 border-radius: 16px 16px 0 0;
@@ -201,10 +232,14 @@
     </style>
 </head>
 <body>
-    <!-- Hamburger button (mobile only) -->
-    <button class="hamburger-btn" @click="toggleMobileSidebar" v-show="isMobile">☰</button>
-    
     <div id="app">
+        <!-- Top header bar (always visible) -->
+        <div class="top-header">
+            <button class="hamburger-icon" @click="toggleMobileSidebar">☰</button>
+            <span class="app-title">🗾 旅行地圖</span>
+            <span class="plan-name" v-if="planName">{{ planName }}</span>
+        </div>
+        
         <div id="sidebar" :class="{ 'mobile-open': mobileSidebarOpen }">
             <div id="sidebar-header">
                 <h1>🗾 旅行地圖</h1>
@@ -583,6 +618,7 @@
             // Mobile state
             const isMobile = ref(false)
             const mobileSidebarOpen = ref(false)
+            const planName = ref('')
             
             const checkMobile = () => {
                 isMobile.value = window.innerWidth <= 768
@@ -977,7 +1013,7 @@
                 onDragStartPlace, onDragOverPlace, onDropOnPlace,
                 onDragStartGroup, onDragOverGroup, onDropOnGroup,
                 buildMapsLink, getRegionColor, getRegionName, getGroupColor,
-                isMobile, mobileSidebarOpen, toggleMobileSidebar
+                isMobile, mobileSidebarOpen, toggleMobileSidebar, planName
             }
         }
     }).mount('#app')
