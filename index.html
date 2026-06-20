@@ -422,10 +422,6 @@
         <div id="sidebar" :class="{ 'mobile-open': mobileSidebarOpen }">
             <div id="sidebar-header">
                 <h1>🗾 旅行地圖</h1>
-                <div class="header-actions">
-                    <input type="file" ref="sidebarFileInput" accept=".json" style="display:none" @change="handleSidebarImport" />
-                    <button @click="$refs.sidebarFileInput.click()">📤 匯入行程</button>
-                </div>
             </div>
             <div class="search-filter">
                 <input v-model="filter.search" placeholder="🔍 搜尋地點、地區、區域、群組..." />
@@ -438,12 +434,13 @@
             <div class="legend">
                 <h3>🎨 地點類型</h3>
                 <div class="legend-items">
-                    <div v-for="(info, type) in PLACE_TYPES" :key="type"
-                         class="legend-item" :class="{ active: filter.type === type }"
-                         @click="filter.type = filter.type === type ? null : type"
-                         style="cursor: pointer;">
-                        <span class="legend-dot" :style="{ backgroundColor: info.color }"></span>{{ info.name }}
-                    </div>
+                    <template v-for="type in filterTypes" :key="type">
+                        <div class="legend-item" :class="{ active: filter.type === type }"
+                             @click="filter.type = filter.type === type ? null : type"
+                             style="cursor: pointer;">
+                            <span class="legend-dot" :style="{ backgroundColor: PLACE_TYPES[type]?.color || '#999' }"></span>{{ PLACE_TYPES[type]?.name || type }}
+                        </div>
+                    </template>
                 </div>
             </div>
             <div id="places-list">
@@ -545,9 +542,14 @@
                         </div>
                         <div class="form-field">
                             <label>類型</label>
-                            <select v-model="selectedPlace.place.type">
-                                <option v-for="(info, type) in PLACE_TYPES" :key="type" :value="type">{{ info.name }}</option>
-                            </select>
+                            <div class="smart-input">
+                                <input :value="selectedPlace.place.type" @input="updateFieldType($event)" :placeholder="existingTypes.length ? '選取或輸入新類型' : '輸入類型'" @focus="selectedPlace._showTypeDropdown = true" @blur="setTimeout(() => { selectedPlace._showTypeDropdown = false }, 200)" />
+                                <div v-if="selectedPlace._showTypeDropdown" class="smart-dropdown">
+                                    <div v-for="t in existingTypes" :key="t" @click="selectedPlace.place.type = t; selectedPlace._showTypeDropdown = false">
+                                        {{ PLACE_TYPES[t]?.name || t }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="form-field">
@@ -616,7 +618,10 @@
                      class="plan-list-item" :class="{ active: currentPlanIdVal === plan.id }"
                      @click="doLoadPlan(plan.id)">
                     <div class="plan-info">
-                        <div class="plan-info-name">{{ plan.name }}</div>
+                        <template v-if="editingPlanId === plan.id">
+                            <input :value="editingPlanName" @keyup.enter="doRenamePlan(plan.id)" @blur="handleRenameBlur(plan.id)" @keyup.escape="cancelRenamePlan" @input="editingPlanName = $event.target.value" style="font-weight:600;font-size:14px;color:#333;border:2px solid #667eea;border-radius:4px;padding:2px 4px;width:100%;outline:none;" />
+                        </template>
+                        <div v-else class="plan-info-name" @dblclick="startRenamePlan(plan)" style="cursor:text" title="雙擊重新命名">{{ plan.name }}</div>
                         <div class="plan-info-meta">
                             {{ plan.groups?.length || 0 }} 個群組 · {{ plan.groups?.reduce((s,g) => s + g.places.length, 0) || 0 }} 地點
                             · {{ formatDate(plan._meta?.lastSaved) }}
@@ -847,6 +852,8 @@
             const newPlanName = ref('')
             const createPlanError = ref('')
             const importFileInput = ref(null)
+            const editingPlanId = ref(null)
+            const editingPlanName = ref('')
             const currentPlanIdVal = ref(null)
             const allPlansObjRef = ref({})
             const allPlansListRef = ref([])
@@ -899,6 +906,11 @@
             const existingAreas = computed(() => {
                 const s = new Set()
                 groups.value.forEach(g => g.places.forEach(p => { if (p.area) s.add(p.area) }))
+                return [...s].sort()
+            })
+            const existingTypes = computed(() => {
+                const s = new Set()
+                groups.value.forEach(g => g.places.forEach(p => { if (p.type) s.add(p.type) }))
                 return [...s].sort()
             })
             const filterRegions = computed(() => {
@@ -1272,6 +1284,50 @@ function importPlan(data) {
                 e.target.value = ''
             }
 
+            const doRenamePlan = (planId) => {
+                if (!editingPlanName.value.trim()) {
+                    alert('行程名稱不能為空')
+                    cancelRenamePlan()
+                    return
+                }
+                const plansData = getAllPlans()
+                if (!plansData || !plansData.plans[planId]) {
+                    cancelRenamePlan()
+                    return
+                }
+                // Check for duplicate names (excluding current plan)
+                const newName = editingPlanName.value.trim()
+                const duplicate = Object.entries(plansData.plans).find(([id, p]) => id !== planId && p.name === newName)
+                if (duplicate) {
+                    alert(`已存在同名行程「${newName}」`)
+                    cancelRenamePlan()
+                    return
+                }
+                plansData.plans[planId].name = newName
+                localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+                refreshPlanRefs()
+                cancelRenamePlan()
+            }
+
+            const cancelRenamePlan = () => {
+                editingPlanId.value = null
+                editingPlanName.value = ''
+            }
+            const handleRenameBlur = (planId) => {
+                if (editingPlanId.value === planId) {
+                    doRenamePlan(planId)
+                }
+            }
+            const startRenamePlan = (plan) => {
+                editingPlanId.value = plan.id
+                editingPlanName.value = plan.name
+            }
+
+            const updateFieldType = (event) => {
+                if (!selectedPlace.value) return
+                selectedPlace.value.place.type = event.target.value
+            }
+
             // ===== EMOJI PICKER =====
             const openEmojiPicker = (target) => { emojiPickerTarget.value = target; showEmojiPicker.value = true }
             const closeEmojiPicker = () => { showEmojiPicker.value = false }
@@ -1525,10 +1581,10 @@ function importPlan(data) {
                 groups, selectedPlace, filter, showEmojiPicker, emojiPickerTarget,
                 showAddGroupForm, newGroupForm, dragState,
                 totalPlaces, totalTypes,
-                existingRegions, existingAreas, filterRegions, filterTypes,
+                existingRegions, existingAreas, existingTypes, filterRegions, filterTypes,
                 PLACE_TYPES, REGION_NAMES, COMMON_EMOJIS,
                 saveToLocalStorage, loadFromLocalStorage,
-                downloadJSON, handleFileUpload, handleSidebarImport, downloadPlanData,
+                downloadJSON, handleFileUpload, downloadPlanData,
                 selectPlace, closeDetail, enableMapPick,
                 filteredGroups, selectFilteredPlace, deleteFilteredPlace,
                 mapPickMode,
@@ -1540,8 +1596,10 @@ function importPlan(data) {
                 isMobile, mobileSidebarOpen, toggleMobileSidebar,
                 // Plan management
                 showPlanSelector, showPlanCreateInput, newPlanName, createPlanError,
-                importFileInput, currentPlanNameRef, allPlansListRef, allPlansObjRef,
-                refreshPlanRefs, doCreatePlan, doLoadPlan, doDeletePlan, handlePlanImport, formatDate
+                importFileInput, editingPlanId, editingPlanName,
+                currentPlanNameRef, allPlansListRef, allPlansObjRef,
+                refreshPlanRefs, doCreatePlan, doLoadPlan, doDeletePlan, handlePlanImport,
+                formatDate, doRenamePlan, cancelRenamePlan, handleRenameBlur, startRenamePlan, updateFieldType
             }
         }
     }).mount('#app')
