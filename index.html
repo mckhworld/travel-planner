@@ -612,9 +612,9 @@
                 <div class="plan-error-msg" v-if="createPlanError">{{ createPlanError }}</div>
             </template>
             <div class="plan-selector-body">
-                <div v-for="(plan, id) in allPlansListRef" :key="id"
-                     class="plan-list-item" :class="{ active: currentPlanIdVal === id }"
-                     @click="doLoadPlan(id)">
+                <div v-for="(plan, idx) in allPlansListRef" :key="plan.id"
+                     class="plan-list-item" :class="{ active: currentPlanIdVal === plan.id }"
+                     @click="doLoadPlan(plan.id)">
                     <div class="plan-info">
                         <div class="plan-info-name">{{ plan.name }}</div>
                         <div class="plan-info-meta">
@@ -623,9 +623,9 @@
                         </div>
                     </div>
                     <div class="plan-actions">
-                        <button class="plan-load-btn" @click.stop="doLoadPlan(id)">載入</button>
+                        <button class="plan-load-btn" @click.stop="doLoadPlan(plan.id)">載入</button>
                         <button class="plan-download-btn" @click.stop="downloadPlanData(plan)">📥</button>
-                        <button class="plan-delete-btn" @click.stop="doDeletePlan(id)" v-if="Object.keys(allPlansObjRef).length > 1">刪除</button>
+                        <button class="plan-delete-btn" @click.stop="doDeletePlan(plan.id)" v-if="Object.keys(allPlansObjRef).length > 1">刪除</button>
                     </div>
                 </div>
                 <div class="plan-list-empty" v-if="!allPlansListRef || allPlansListRef.length === 0">
