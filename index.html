@@ -847,7 +847,7 @@
             const newPlanName = ref('')
             const createPlanError = ref('')
             const importFileInput = ref(null)
-            let currentPlanIdVal = null
+            const currentPlanIdVal = ref(null)
             const allPlansObjRef = ref({})
             const allPlansListRef = ref([])
             const currentPlanNameRef = ref('')
@@ -990,54 +990,6 @@ function getAllPlans() {
     return null
 }
 
-function saveAllPlans() {
-    const plansData = getAllPlans()
-    if (!plansData) return
-    const current = plansData.plans[plansData.currentPlanId]
-    if (current) {
-        current.groups = JSON.parse(JSON.stringify(groups.value))
-        current._meta = { version: '1.0', lastSaved: new Date().toISOString() }
-    }
-    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
-}
-
-function saveToLocalStorage() {
-    const plansData = getAllPlans()
-    if (!plansData) return
-    const current = plansData.plans[plansData.currentPlanId]
-    if (current) {
-        current.groups = JSON.parse(JSON.stringify(groups.value))
-        current._meta = { version: '1.0', lastSaved: new Date().toISOString() }
-        localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
-    }
-}
-
-function loadFromLocalStorage() {
-    let plansData = getAllPlans()
-    // Migration: check old single-plan key
-    const oldKey = 'travel-map-data'
-    const oldRaw = localStorage.getItem(oldKey)
-    if (oldRaw && !plansData) {
-        try {
-            const oldData = JSON.parse(oldRaw)
-            if (oldData.groups && Array.isArray(oldData.groups)) {
-                const planId = 'plan_' + Date.now()
-                plansData = {
-                    currentPlanId: planId,
-                    plans: { [planId]: JSON.parse(JSON.stringify(oldData)) }
-                }
-                localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
-                localStorage.removeItem(oldKey)
-            }
-        } catch {}
-    }
-    if (!plansData) return null
-    const current = plansData.plans[plansData.currentPlanId]
-    if (current && Array.isArray(current.groups) && current.groups.length > 0) {
-        groups.value = JSON.parse(JSON.stringify(current.groups))
-    }
-    return plansData
-}
 
 function createPlan(name) {
     let plansData = getAllPlans()
@@ -1062,22 +1014,6 @@ function createPlan(name) {
     return planId
 }
 
-function loadPlan(planId) {
-    const plansData = getAllPlans()
-    if (!plansData || !plansData.plans[planId]) return false
-    plansData.currentPlanId = planId
-    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
-    groups.value = JSON.parse(JSON.stringify(plansData.plans[planId].groups))
-
-    // Reset filter states that persist across plan switches
-    filter.region = null
-    filter.type = null
-
-    // Clear selected place (stale reference to old plan's data)
-    selectedPlace.value = null
-
-    return true
-}
 
 function deletePlan(planId) {
     const plansData = getAllPlans()
@@ -1166,7 +1102,7 @@ function importPlan(data) {
                             return
                         }
                         const planId = importPlan(data)
-                        currentPlanIdVal = planId
+                        currentPlanIdVal.value = planId
                         refreshPlanRefs()
                     } catch {
                         alert('JSON 格式錯誤')
@@ -1287,7 +1223,7 @@ function importPlan(data) {
                     return
                 }
                 const planId = createPlan(newPlanName.value.trim())
-                currentPlanIdVal = planId
+                currentPlanIdVal.value = planId
                 refreshPlanRefs()
                 newPlanName.value = ''
                 showPlanCreateInput.value = false
@@ -1296,7 +1232,7 @@ function importPlan(data) {
             }
             const doLoadPlan = (planId) => {
                 if (loadPlan(planId)) {
-                    currentPlanIdVal = planId
+                    currentPlanIdVal.value = planId
                     refreshPlanRefs()
                     showPlanSelector.value = false
                 }
@@ -1309,7 +1245,7 @@ function importPlan(data) {
                     return
                 }
                 if (deletePlan(planId)) {
-                    currentPlanIdVal = plansData.currentPlanId
+                    currentPlanIdVal.value = plansData.currentPlanId
                     refreshPlanRefs()
                 }
             }
@@ -1325,7 +1261,7 @@ function importPlan(data) {
                             return
                         }
                         const planId = importPlan(data)
-                        currentPlanIdVal = planId
+                        currentPlanIdVal.value = planId
                         refreshPlanRefs()
                         showPlanSelector.value = false
                     } catch {
@@ -1505,9 +1441,9 @@ function importPlan(data) {
                 // If no plans exist at all (first ever launch), create a default plan
                 if (!plansData || !Object.keys(plansData.plans).length) {
                     const planId = createPlan('預設行程')
-                    currentPlanIdVal = planId
+                    currentPlanIdVal.value = planId
                 } else {
-                    currentPlanIdVal = plansData.currentPlanId
+                    currentPlanIdVal.value = plansData.currentPlanId
                 }
                 refreshPlanRefs()
                 initMap()
@@ -1529,6 +1465,61 @@ function importPlan(data) {
                 window.removeEventListener('beforeunload', () => {})
                 window.removeEventListener('resize', checkMobile)
             })
+
+            function saveToLocalStorage() {
+                const plansData = getAllPlans()
+                if (!plansData) return
+                const current = plansData.plans[plansData.currentPlanId]
+                if (current) {
+                    current.groups = JSON.parse(JSON.stringify(groups.value))
+                    current._meta = { version: '1.0', lastSaved: new Date().toISOString() }
+                    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+                }
+            }
+
+            function loadFromLocalStorage() {
+                let plansData = getAllPlans()
+                // Migration: check old single-plan key
+                const oldKey = 'travel-map-data'
+                const oldRaw = localStorage.getItem(oldKey)
+                if (oldRaw && !plansData) {
+                    try {
+                        const oldData = JSON.parse(oldRaw)
+                        if (oldData.groups && Array.isArray(oldData.groups)) {
+                            const planId = 'plan_' + Date.now()
+                            plansData = {
+                                currentPlanId: planId,
+                                plans: { [planId]: JSON.parse(JSON.stringify(oldData)) }
+                            }
+                            localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+                            localStorage.removeItem(oldKey)
+                        }
+                    } catch {}
+                }
+                if (!plansData) return null
+                const current = plansData.plans[plansData.currentPlanId]
+                if (current && Array.isArray(current.groups) && current.groups.length > 0) {
+                    groups.value = JSON.parse(JSON.stringify(current.groups))
+                }
+                return plansData
+            }
+
+            function loadPlan(planId) {
+                const plansData = getAllPlans()
+                if (!plansData || !plansData.plans[planId]) return false
+                plansData.currentPlanId = planId
+                localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+                groups.value = JSON.parse(JSON.stringify(plansData.plans[planId].groups))
+
+                // Reset filter states that persist across plan switches
+                filter.region = null
+                filter.type = null
+
+                // Clear selected place (stale reference to old plan's data)
+                selectedPlace.value = null
+
+                return true
+            }
 
             return {
                 groups, selectedPlace, filter, showEmojiPicker, emojiPickerTarget,
