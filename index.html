@@ -13,6 +13,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; height: 100vh; overflow: hidden; }
         #app { display: flex; height: 100%; position: relative; }
+        #main-content { padding-top: 52px; flex: 1; display: flex; overflow: hidden; position: relative; }
         /* ===== TOP HEADER BAR ===== */
         .top-header {
             position: fixed;
@@ -79,12 +80,6 @@
         .search-filter { padding: 12px 16px; background: white; border-bottom: 1px solid #dee2e6; }
         .search-filter input { width: 100%; padding: 8px 12px; border: 1px solid #dee2e6; border-radius: 6px; font-size: 13px; outline: none; }
         .search-filter input:focus { border-color: #667eea; box-shadow: 0 0 0 2px rgba(102,126,234,0.2); }
-        .filter-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-        .filter-pills::-webkit-scrollbar { display: none; }
-        .filter-pills button { padding: 4px 10px; border: 1px solid #dee2e6; border-radius: 12px; background: white; font-size: 11px; cursor: pointer; transition: all 0.2s; }
-        .filter-pills button.active { background: #667eea; color: white; border-color: #667eea; }
-        .filter-pills button:hover:not(.active) { background: #f0f4ff; }
-
         .stat-card { flex: 1; padding: 8px; border-radius: 8px; text-align: center; background: #f8f9fa; }
         .stat-card .number { font-size: 18px; font-weight: bold; color: #333; }
         .stat-card .label { font-size: 10px; color: #666; margin-top: 2px; }
@@ -337,6 +332,7 @@
         @media (max-width: 768px) {
             body { flex-direction: column; }
             #app { flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
+            #main-content { padding-top: 0; }
             
             /* Hide sidebar by default, show as overlay */
             #sidebar {
@@ -352,16 +348,9 @@
             }
             #sidebar:not(.mobile-open) { transform: translateX(-100%); }
             #sidebar.mobile-open { transform: translateX(0); }
-            
-            /* Sidebar accounts for header bar height */
-            #sidebar {
-                top: 52px;
-                height: calc(100vh - 52px);
-                z-index: 1000;
-            }
-            
+
             /* Map below header bar, lowest z-index */
-            #map { flex: 1; height: calc(100vh - 52px); width: 100%; margin-top: 52px; z-index: 1; }
+            #map { flex: 1; height: calc(100vh - 52px); width: 100%; z-index: 1; }
             /* Map must be above detail panel during pick mode */
             #map.pick-mode { z-index: 1003; }
             
@@ -424,17 +413,13 @@
             <button class="plan-switch-btn" @click="showPlanSelector = !showPlanSelector">📋</button>
         </div>
         
-        <div id="sidebar" :class="{ 'mobile-open': mobileSidebarOpen }">
+        <div id="main-content">
+            <div id="sidebar" :class="{ 'mobile-open': mobileSidebarOpen }">
             <div id="sidebar-header">
                 <h1>🗾 旅行地圖</h1>
             </div>
             <div class="search-filter">
                 <input v-model="filter.search" placeholder="🔍 搜尋地點、地區、區域、群組..." />
-                <div class="filter-pills">
-                    <button :class="{ active: !filter.region && !filter.type }" @click="clearFilter">全部</button>
-                    <button v-for="r in filterRegions" :key="r" :class="{ active: filter.region === r }" @click="filter.region = filter.region === r ? null : r">{{ getRegionName(r) }}</button>
-                    <button v-for="t in filterTypes" :key="t" :class="{ active: filter.type === t }" @click="filter.type = filter.type === t ? null : t">{{ PLACE_TYPES[t]?.name || t }}</button>
-                </div>
             </div>
             <div class="legend">
                 <h3>🎨 地點類型</h3>
@@ -662,6 +647,7 @@
             </div>
         </div>
     </div>
+</div>
 
     <script type="module">
     import { createApp, ref, computed, watch, onMounted, onUnmounted, reactive, nextTick } from 'vue'
@@ -931,9 +917,6 @@
 
             const filteredGroups = computed(() => {
                 let result = groups.value
-                if (filter.region) {
-                    result = result.filter(g => g.name === filter.region)
-                }
                 if (filter.type) {
                     result = result.map(g => ({ ...g, places: g.places.filter(p => p.type === filter.type) }))
                         .filter(g => g.places.length > 0)
@@ -954,7 +937,6 @@
                 for (let i = 0; i < groups.value.length; i++) {
                     const matchPlaces = groups.value[i].places.filter(p => {
                         if (filter.type && p.type !== filter.type) return false
-                        if (filter.region && groups.value[i].name !== filter.region) return false
                         if (filter.search) {
                             const q = filter.search.toLowerCase()
                             return (p.name || '').toLowerCase().includes(q) ||
@@ -1217,7 +1199,7 @@ function importPlan(data) {
                     groups.value[0].places.push(...group.places)
                 }
             }
-            const clearFilter = () => { filter.region = null; filter.type = null }
+            const clearFilter = () => { filter.search = ''; filter.type = null }
 
             // ===== PLAN MANAGEMENT =====
             const formatDate = (iso) => {
@@ -1573,7 +1555,6 @@ function importPlan(data) {
                 groups.value = JSON.parse(JSON.stringify(plansData.plans[planId].groups))
 
                 // Reset filter states that persist across plan switches
-                filter.region = null
                 filter.type = null
 
                 // Clear selected place (stale reference to old plan's data)
@@ -1586,7 +1567,7 @@ function importPlan(data) {
                 groups, selectedPlace, filter, showEmojiPicker, emojiPickerTarget,
                 showAddGroupForm, newGroupForm, dragState,
                 totalPlaces, totalTypes,
-                existingRegions, existingAreas, existingTypes, filterRegions, filterTypes,
+                existingRegions, existingAreas, existingTypes, filterTypes,
                 PLACE_TYPES, REGION_NAMES, COMMON_EMOJIS,
                 saveToLocalStorage, loadFromLocalStorage,
                 downloadJSON, handleFileUpload, downloadPlanData,
