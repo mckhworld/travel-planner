@@ -1068,6 +1068,14 @@ function loadPlan(planId) {
     plansData.currentPlanId = planId
     localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
     groups.value = JSON.parse(JSON.stringify(plansData.plans[planId].groups))
+
+    // Reset filter states that persist across plan switches
+    filter.region = null
+    filter.type = null
+
+    // Clear selected place (stale reference to old plan's data)
+    selectedPlace.value = null
+
     return true
 }
 
