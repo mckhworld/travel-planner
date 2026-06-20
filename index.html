@@ -56,6 +56,20 @@
             margin-left: 8px;
             white-space: nowrap;
         }
+        .top-header .plan-switch-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-left: 8px;
+            transition: background 0.2s;
+        }
+        .top-header .plan-switch-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
         #sidebar { width: 400px; background: #f8f9fa; border-right: 1px solid #dee2e6; overflow-y: auto; display: flex; flex-direction: column; position: relative; z-index: 10; }
         #sidebar-header { padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
         #sidebar-header h1 { font-size: 18px; margin-bottom: 8px; }
@@ -157,6 +171,158 @@
         .emoji-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 12px; }
         .emoji-grid button { font-size: 18px; background: none; border: none; cursor: pointer; padding: 2px; border-radius: 4px; transition: background 0.15s; min-width: 0; height: 28px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; flex-shrink: 0; }
         .no-results { text-align: center; padding: 30px 20px; color: #999; font-size: 13px; }
+        /* ===== PLAN SELECTOR PANEL ===== */
+        .plan-selector-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1006;
+        }
+        .plan-selector-panel {
+            position: fixed;
+            top: 0; right: 0;
+            width: 360px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 16px rgba(0,0,0,0.15);
+            z-index: 1007;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        .plan-selector-panel.open {
+            transform: translateX(0);
+        }
+        .plan-selector-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .plan-selector-header h3 { margin: 0; font-size: 16px; }
+        .plan-selector-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        .plan-selector-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+        .plan-list-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        .plan-list-item.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        .plan-list-item:not(.active):hover {
+            background: #f8f9fa;
+        }
+        .plan-info { flex: 1; min-width: 0; }
+        .plan-info-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .plan-info-meta {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+        .plan-actions {
+            display: flex;
+            gap: 4px;
+        }
+        .plan-actions button {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .plan-load-btn {
+            background: #667eea;
+            color: white;
+        }
+        .plan-load-btn:hover { background: #5568d3; }
+        .plan-delete-btn {
+            background: #fee;
+            color: #e74c3c;
+        }
+        .plan-delete-btn:hover { background: #e74c3c; color: white; }
+        .plan-list-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 14px;
+        }
+        .plan-selector-actions {
+            padding: 12px;
+            border-top: 1px solid #dee2e6;
+        }
+        .plan-selector-actions button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-bottom: 6px;
+        }
+        .plan-create-btn {
+            background: #27ae60;
+            color: white;
+        }
+        .plan-create-btn:hover { background: #219a52; }
+        .plan-import-btn {
+            background: #667eea;
+            color: white;
+        }
+        .plan-import-btn:hover { background: #5568d3; }
+        .plan-create-input-row {
+            display: flex;
+            gap: 6px;
+            padding: 8px 12px;
+        }
+        .plan-create-input-row input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .plan-create-input-row button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #27ae60;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .plan-error-msg {
+            color: #e74c3c;
+            font-size: 12px;
+            padding: 0 12px 8px;
+        }
         /* ===== MOBILE VIEW ===== */
         @media (max-width: 768px) {
             body { flex-direction: column; }
@@ -224,6 +390,9 @@
             /* Hide legend on mobile */
             .legend { display: none; }
             
+            /* Plan selector on mobile */
+            .plan-selector-panel { width: 100%; }
+            
             /* Compact stats */
             .stats { padding: 8px 12px; }
             .stat-card .number { font-size: 16px; }
@@ -242,8 +411,10 @@
         <!-- Top header bar (always visible) -->
         <div class="top-header">
             <button class="hamburger-icon" @click="toggleMobileSidebar">☰</button>
-            <span class="app-title">🗾 旅行地圖</span>
-            <span class="plan-name" v-if="planName">{{ planName }}</span>
+            <span class="app-title" v-if="!currentPlanName">🗾 旅行地圖</span>
+            <span class="app-title" v-else>🗾 旅行地圖</span>
+            <span class="plan-name" v-if="currentPlanName">· {{ currentPlanName }}</span>
+            <button class="plan-switch-btn" @click="showPlanSelector = !showPlanSelector">📋</button>
         </div>
         
         <div id="sidebar" :class="{ 'mobile-open': mobileSidebarOpen }">
@@ -422,6 +593,49 @@
                 </div>
             </div>
         <div id="map" :class="{ 'pick-mode': mapPickMode }"></div>
+
+        <!-- Plan Selector Panel -->
+        <div class="plan-selector-overlay" v-if="showPlanSelector" @click="showPlanSelector = false"></div>
+        <div class="plan-selector-panel" :class="{ open: showPlanSelector }">
+            <div class="plan-selector-header">
+                <h3>📋 行程管理</h3>
+                <button class="plan-selector-close" @click="showPlanSelector = false">✕</button>
+            </div>
+            <template v-if="showPlanCreateInput">
+                <div class="plan-create-input-row" style="flex-direction:column; gap:6px;">
+                    <input v-model="newPlanName" placeholder="行程名稱" @keyup.enter="doCreatePlan" />
+                    <div style="display:flex; gap:6px;">
+                        <button @click="doCreatePlan">✓ 建立</button>
+                        <button @click="showPlanCreateInput = false" style="background:#fee; color:#e74c3c;">✕</button>
+                    </div>
+                </div>
+                <div class="plan-error-msg" v-if="createPlanError">{{ createPlanError }}</div>
+            </template>
+            <div class="plan-selector-body">
+                <div v-for="(plan, id) in allPlansList" :key="id"
+                     class="plan-list-item" :class="{ active: currentPlanId === id }">
+                    <div class="plan-info" @click="doLoadPlan(id)">
+                        <div class="plan-info-name">{{ plan.name }}</div>
+                        <div class="plan-info-meta">
+                            {{ plan.groups?.length || 0 }} 個群組 · {{ plan.groups?.reduce((s,g) => s + g.places.length, 0) || 0 }} 地點
+                            · {{ formatDate(plan._meta?.lastSaved) }}
+                        </div>
+                    </div>
+                    <div class="plan-actions">
+                        <button class="plan-load-btn" @click="doLoadPlan(id)">載入</button>
+                        <button class="plan-delete-btn" @click="doDeletePlan(id)" v-if="Object.keys(allPlansObj).length > 1">刪除</button>
+                    </div>
+                </div>
+                <div class="plan-list-empty" v-if="!allPlansList || allPlansList.length === 0">
+                    尚無行程，點擊「新增行程」開始
+                </div>
+            </div>
+            <div class="plan-selector-actions">
+                <button class="plan-create-btn" @click="showPlanCreateInput = true">➕ 新增行程</button>
+                <input type="file" ref="importFileInput" accept=".json" style="display:none" @change="handlePlanImport" />
+                <button class="plan-import-btn" @click="$refs.importFileInput.click()">📤 匯入行程</button>
+            </div>
+        </div>
 
         <!-- Emoji Picker Panel -->
         <div class="emoji-picker-panel" :class="{ expanded: showEmojiPicker }">
@@ -624,7 +838,14 @@
             // Mobile state
             const isMobile = ref(false)
             const mobileSidebarOpen = ref(false)
-            const planName = ref('')
+            
+            // Plan selector state
+            const showPlanSelector = ref(false)
+            const showPlanCreateInput = ref(false)
+            const newPlanName = ref('')
+            const createPlanError = ref('')
+            const importFileInput = ref(null)
+            let currentPlanIdVal = null
             
             const checkMobile = () => {
                 isMobile.value = window.innerWidth <= 768
@@ -650,7 +871,24 @@
             let mapPickMode = ref(false)
             let pickMarker = null
 
-            // ===== COMPUTED =====
+// ===== COMPUTED =====
+            const currentPlanName = computed(() => {
+                if (!currentPlanIdVal) return ''
+                const plansData = getAllPlans()
+                if (plansData?.plans[currentPlanIdVal]) {
+                    return plansData.plans[currentPlanIdVal].name
+                }
+                return ''
+            })
+            const allPlansObj = computed(() => {
+                const plansData = getAllPlans()
+                return plansData?.plans || {}
+            })
+            const allPlansList = computed(() => {
+                if (!allPlansObj.value) return []
+                return Object.entries(allPlansObj.value).map(([id, plan]) => ({ id, ...plan }))
+            })
+
             const totalPlaces = computed(() => groups.value.reduce((s, g) => s + g.places.length, 0))
             const totalTypes = computed(() => {
                 const t = new Set()
@@ -702,23 +940,135 @@
                 return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}&hl=zh-TW`
             }
 
-            // ===== LOCAL STORAGE =====
-            const STORAGE_KEY = 'travel-map-data'
-            const saveToLocalStorage = () => {
-                const data = { groups: groups.value, _meta: { version: '1.0', lastSaved: new Date().toISOString() } }
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-            }
-            const loadFromLocalStorage = () => {
-                const raw = localStorage.getItem(STORAGE_KEY)
-                if (raw) {
-                    try {
-                        const data = JSON.parse(raw)
-                        if (data.groups && Array.isArray(data.groups) && data.groups.length > 0) {
-                            groups.value = data.groups
-                        }
-                    } catch {}
+// ===== MULTI-PLAN STORAGE =====
+const PLANS_STORAGE_KEY = 'travel-map-plans'
+let hasInteracted = false
+
+function getAllPlans() {
+    const raw = localStorage.getItem(PLANS_STORAGE_KEY)
+    if (raw) {
+        try { return JSON.parse(raw) } catch {}
+    }
+    return null
+}
+
+function saveAllPlans() {
+    const plansData = getAllPlans()
+    if (!plansData) return
+    const current = plansData.plans[plansData.currentPlanId]
+    if (current) {
+        current.groups = JSON.parse(JSON.stringify(groups.value))
+        current._meta = { version: '1.0', lastSaved: new Date().toISOString() }
+    }
+    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+}
+
+function saveToLocalStorage() {
+    const plansData = getAllPlans()
+    if (!plansData) return
+    const current = plansData.plans[plansData.currentPlanId]
+    if (current) {
+        current.groups = JSON.parse(JSON.stringify(groups.value))
+        current._meta = { version: '1.0', lastSaved: new Date().toISOString() }
+        localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+    }
+}
+
+function loadFromLocalStorage() {
+    let plansData = getAllPlans()
+    // Migration: check old single-plan key
+    const oldKey = 'travel-map-data'
+    const oldRaw = localStorage.getItem(oldKey)
+    if (oldRaw && !plansData) {
+        try {
+            const oldData = JSON.parse(oldRaw)
+            if (oldData.groups && Array.isArray(oldData.groups)) {
+                const planId = 'plan_' + Date.now()
+                plansData = {
+                    currentPlanId: planId,
+                    plans: { [planId]: JSON.parse(JSON.stringify(oldData)) }
                 }
+                localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+                localStorage.removeItem(oldKey)
             }
+        } catch {}
+    }
+    if (!plansData) return null
+    const current = plansData.plans[plansData.currentPlanId]
+    if (current && Array.isArray(current.groups) && current.groups.length > 0) {
+        groups.value = JSON.parse(JSON.stringify(current.groups))
+    }
+    return plansData
+}
+
+function createPlan(name) {
+    let plansData = getAllPlans()
+    if (!plansData) {
+        plansData = { currentPlanId: null, plans: {} }
+    }
+    // Ensure unique name
+    let finalName = name
+    let counter = 1
+    while (Object.values(plansData.plans).some(p => p.name === finalName)) {
+        finalName = `${name} (${counter})`
+        counter++
+    }
+    const planId = 'plan_' + Date.now()
+    plansData.plans[planId] = {
+        name: finalName,
+        groups: JSON.parse(JSON.stringify(DEFAULT_DATA.groups)),
+        _meta: { version: '1.0', lastSaved: new Date().toISOString() }
+    }
+    plansData.currentPlanId = planId
+    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+    return planId
+}
+
+function loadPlan(planId) {
+    const plansData = getAllPlans()
+    if (!plansData || !plansData.plans[planId]) return false
+    plansData.currentPlanId = planId
+    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+    groups.value = JSON.parse(JSON.stringify(plansData.plans[planId].groups))
+    return true
+}
+
+function deletePlan(planId) {
+    const plansData = getAllPlans()
+    if (!plansData || Object.keys(plansData.plans).length <= 1) return false
+    delete plansData.plans[planId]
+    // If deleted current, load first available
+    if (plansData.currentPlanId === planId) {
+        const remaining = Object.keys(plansData.plans)[0]
+        plansData.currentPlanId = remaining
+    }
+    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+    return true
+}
+
+function importPlan(data) {
+    let plansData = getAllPlans()
+    if (!plansData) {
+        plansData = { currentPlanId: null, plans: {} }
+    }
+    const baseName = data._meta?.planName || '匯入行程'
+    let planName = `${baseName}_${new Date().toISOString().replace(/[T:]/g, '-').slice(0, 19)}`
+    let counter = 1
+    while (Object.values(plansData.plans).some(p => p.name === planName)) {
+        planName = `${baseName}_${new Date().toISOString().replace(/[T:]/g, '-').slice(0, 19)}_${counter}`
+        counter++
+    }
+    const planId = 'plan_' + Date.now()
+    plansData.plans[planId] = {
+        name: planName,
+        groups: JSON.parse(JSON.stringify(data.groups)),
+        _meta: { version: '1.0', lastSaved: new Date().toISOString() }
+    }
+    plansData.currentPlanId = planId
+    localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+    return planId
+}
+
 
             // ===== FILE I/O =====
             const downloadJSON = () => {
@@ -818,6 +1168,72 @@
                 }
             }
             const clearFilter = () => { filter.region = null; filter.type = null }
+
+            // ===== PLAN MANAGEMENT =====
+            const formatDate = (iso) => {
+                if (!iso) return ''
+                const d = new Date(iso)
+                const now = new Date()
+                const diffMs = now - d
+                const mins = Math.floor(diffMs / 60000)
+                if (mins < 1) return '剛剛'
+                if (mins < 60) return `${mins}分鐘前`
+                const hrs = Math.floor(mins / 60)
+                if (hrs < 24) return `${hrs}小時前`
+                const days = Math.floor(hrs / 24)
+                if (days < 7) return `${days}天前`
+                return d.toLocaleDateString('zh-TW')
+            }
+            const doCreatePlan = () => {
+                if (!newPlanName.value.trim()) {
+                    createPlanError.value = '請輸入行程名稱'
+                    return
+                }
+                const planId = createPlan(newPlanName.value.trim())
+                newPlanName.value = ''
+                showPlanCreateInput.value = false
+                createPlanError.value = ''
+                currentPlanIdVal = planId
+                showPlanSelector.value = false
+            }
+            const doLoadPlan = (planId) => {
+                if (loadPlan(planId)) {
+                    currentPlanIdVal = planId
+                    showPlanSelector.value = false
+                }
+            }
+            const doDeletePlan = (planId) => {
+                if (!confirm('確定刪除此行程？')) return
+                const plansData = getAllPlans()
+                if (Object.keys(plansData.plans).length <= 1) {
+                    alert('至少需要保留一個行程')
+                    return
+                }
+                if (deletePlan(planId)) {
+                    currentPlanIdVal = plansData.currentPlanId
+                }
+            }
+            const handlePlanImport = (e) => {
+                const file = e.target.files[0]
+                if (!file) return
+                const reader = new FileReader()
+                reader.onload = (ev) => {
+                    try {
+                        const data = JSON.parse(ev.target.result)
+                        if (!data.groups || !Array.isArray(data.groups)) {
+                            alert('JSON 格式錯誤：缺少 groups 陣列')
+                            return
+                        }
+                        const planId = importPlan(data)
+                        currentPlanIdVal = planId
+                        showPlanSelector.value = false
+                    } catch {
+                        alert('JSON 格式錯誤')
+                    }
+                }
+                reader.readAsText(file)
+                e.target.value = ''
+            }
 
             // ===== EMOJI PICKER =====
             const openEmojiPicker = (target) => { emojiPickerTarget.value = target; showEmojiPicker.value = true }
@@ -982,9 +1398,12 @@
                 saveToLocalStorage()
             }, { deep: true })
 
-            // ===== LIFECYCLE =====
+// ===== LIFECYCLE =====
             onMounted(() => {
-                loadFromLocalStorage()
+                const plansData = loadFromLocalStorage()
+                if (plansData) {
+                    currentPlanIdVal = plansData.currentPlanId
+                }
                 initMap()
                 // Fix Leaflet map sizing
                 setTimeout(() => { map.invalidateSize() }, 200)
@@ -995,7 +1414,7 @@
                 window.addEventListener('resize', checkMobile)
                 window.addEventListener('beforeunload', (e) => {
                     if (hasInteracted) {
-                        const data = localStorage.getItem(STORAGE_KEY)
+                        const data = localStorage.getItem(PLANS_STORAGE_KEY)
                         if (data) { e.preventDefault(); e.returnValue = '' }
                     }
                 })
@@ -1020,7 +1439,11 @@
                 onDragStartPlace, onDragOverPlace, onDropOnPlace,
                 onDragStartGroup, onDragOverGroup, onDropOnGroup,
                 buildMapsLink, getRegionColor, getRegionName, getGroupColor,
-                isMobile, mobileSidebarOpen, toggleMobileSidebar, planName
+                isMobile, mobileSidebarOpen, toggleMobileSidebar,
+                // Plan management
+                showPlanSelector, showPlanCreateInput, newPlanName, createPlanError,
+                importFileInput, currentPlanName, allPlansList, allPlansObj,
+                doCreatePlan, doLoadPlan, doDeletePlan, handlePlanImport, formatDate
             }
         }
     }).mount('#app')
