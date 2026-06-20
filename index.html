@@ -411,9 +411,8 @@
         <!-- Top header bar (always visible) -->
         <div class="top-header">
             <button class="hamburger-icon" @click="toggleMobileSidebar">☰</button>
-            <span class="app-title" v-if="!currentPlanName">🗾 旅行地圖</span>
-            <span class="app-title" v-else>🗾 旅行地圖</span>
-            <span class="plan-name" v-if="currentPlanName">· {{ currentPlanName }}</span>
+            <span class="app-title">🗾 旅行地圖</span>
+            <span class="plan-name" v-if="currentPlanNameRef">· {{ currentPlanNameRef }}</span>
             <button class="plan-switch-btn" @click="showPlanSelector = !showPlanSelector">📋</button>
         </div>
         
@@ -612,8 +611,8 @@
                 <div class="plan-error-msg" v-if="createPlanError">{{ createPlanError }}</div>
             </template>
             <div class="plan-selector-body">
-                <div v-for="(plan, id) in allPlansList" :key="id"
-                     class="plan-list-item" :class="{ active: currentPlanId === id }">
+                <div v-for="(plan, id) in allPlansListRef" :key="id"
+                     class="plan-list-item" :class="{ active: currentPlanIdVal === id }">
                     <div class="plan-info" @click="doLoadPlan(id)">
                         <div class="plan-info-name">{{ plan.name }}</div>
                         <div class="plan-info-meta">
@@ -623,10 +622,10 @@
                     </div>
                     <div class="plan-actions">
                         <button class="plan-load-btn" @click="doLoadPlan(id)">載入</button>
-                        <button class="plan-delete-btn" @click="doDeletePlan(id)" v-if="Object.keys(allPlansObj).length > 1">刪除</button>
+                        <button class="plan-delete-btn" @click="doDeletePlan(id)" v-if="Object.keys(allPlansObjRef).length > 1">刪除</button>
                     </div>
                 </div>
-                <div class="plan-list-empty" v-if="!allPlansList || allPlansList.length === 0">
+                <div class="plan-list-empty" v-if="!allPlansListRef || allPlansListRef.length === 0">
                     尚無行程，點擊「新增行程」開始
                 </div>
             </div>
@@ -846,6 +845,9 @@
             const createPlanError = ref('')
             const importFileInput = ref(null)
             let currentPlanIdVal = null
+            const allPlansObjRef = ref({})
+            const allPlansListRef = ref([])
+            const currentPlanNameRef = ref('')
             
             const checkMobile = () => {
                 isMobile.value = window.innerWidth <= 768
@@ -867,27 +869,18 @@
 
             let map = null
             let markers = []
-            let hasInteracted = false
             let mapPickMode = ref(false)
             let pickMarker = null
 
 // ===== COMPUTED =====
-            const currentPlanName = computed(() => {
-                if (!currentPlanIdVal) return ''
+            const refreshPlanRefs = () => {
                 const plansData = getAllPlans()
-                if (plansData?.plans[currentPlanIdVal]) {
-                    return plansData.plans[currentPlanIdVal].name
-                }
-                return ''
-            })
-            const allPlansObj = computed(() => {
-                const plansData = getAllPlans()
-                return plansData?.plans || {}
-            })
-            const allPlansList = computed(() => {
-                if (!allPlansObj.value) return []
-                return Object.entries(allPlansObj.value).map(([id, plan]) => ({ id, ...plan }))
-            })
+                allPlansObjRef.value = plansData?.plans || {}
+                currentPlanNameRef.value = (plansData?.currentPlanId && plansData.plans[plansData.currentPlanId])
+                    ? plansData.plans[plansData.currentPlanId].name
+                    : ''
+                allPlansListRef.value = plansData ? Object.entries(plansData.plans).map(([id, plan]) => ({ id, ...plan })) : []
+            }
 
             const totalPlaces = computed(() => groups.value.reduce((s, g) => s + g.places.length, 0))
             const totalTypes = computed(() => {
@@ -1190,15 +1183,17 @@ function importPlan(data) {
                     return
                 }
                 const planId = createPlan(newPlanName.value.trim())
+                currentPlanIdVal = planId
+                refreshPlanRefs()
                 newPlanName.value = ''
                 showPlanCreateInput.value = false
                 createPlanError.value = ''
-                currentPlanIdVal = planId
                 showPlanSelector.value = false
             }
             const doLoadPlan = (planId) => {
                 if (loadPlan(planId)) {
                     currentPlanIdVal = planId
+                    refreshPlanRefs()
                     showPlanSelector.value = false
                 }
             }
@@ -1211,6 +1206,7 @@ function importPlan(data) {
                 }
                 if (deletePlan(planId)) {
                     currentPlanIdVal = plansData.currentPlanId
+                    refreshPlanRefs()
                 }
             }
             const handlePlanImport = (e) => {
@@ -1226,6 +1222,7 @@ function importPlan(data) {
                         }
                         const planId = importPlan(data)
                         currentPlanIdVal = planId
+                        refreshPlanRefs()
                         showPlanSelector.value = false
                     } catch {
                         alert('JSON 格式錯誤')
@@ -1400,10 +1397,15 @@ function importPlan(data) {
 
 // ===== LIFECYCLE =====
             onMounted(() => {
-                const plansData = loadFromLocalStorage()
-                if (plansData) {
+                let plansData = loadFromLocalStorage()
+                // If no plans exist at all (first ever launch), create a default plan
+                if (!plansData || !Object.keys(plansData.plans).length) {
+                    const planId = createPlan('預設行程')
+                    currentPlanIdVal = planId
+                } else {
                     currentPlanIdVal = plansData.currentPlanId
                 }
+                refreshPlanRefs()
                 initMap()
                 // Fix Leaflet map sizing
                 setTimeout(() => { map.invalidateSize() }, 200)
@@ -1442,8 +1444,8 @@ function importPlan(data) {
                 isMobile, mobileSidebarOpen, toggleMobileSidebar,
                 // Plan management
                 showPlanSelector, showPlanCreateInput, newPlanName, createPlanError,
-                importFileInput, currentPlanName, allPlansList, allPlansObj,
-                doCreatePlan, doLoadPlan, doDeletePlan, handlePlanImport, formatDate
+                importFileInput, currentPlanNameRef, allPlansListRef, allPlansObjRef,
+                refreshPlanRefs, doCreatePlan, doLoadPlan, doDeletePlan, handlePlanImport, formatDate
             }
         }
     }).mount('#app')
