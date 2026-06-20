@@ -759,7 +759,8 @@
                 // Fly to marker
                 if (markers[pi]) {
                     map.setView([groups.value[gi].places[pi].lat, groups.value[gi].places[pi].lng], map.getZoom())
-                    markers[pi].openPopup()
+                    // Delay openPopup to ensure Leaflet popup DOM is ready
+                    setTimeout(() => { if (markers[pi]) markers[pi].openPopup() }, 50)
                 }
             }
             const closeDetail = () => {
