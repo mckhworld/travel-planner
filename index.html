@@ -101,6 +101,7 @@
         .place-item:hover { transform: translateX(3px); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
         .place-item.selected { box-shadow: 0 0 0 2px rgba(102,126,234,0.4); background: #f0f4ff; }
         .place-item.drag-over { border-top: 3px solid #667eea; margin-top: -1px; }
+        .place-placeholder { height: 4px; background: #667eea; margin: 3px 0; border-radius: 2px; }
         .place-item .name { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
         .place-item .region { font-size: 10px; color: #666; }
         .place-item .type-badge { display: inline-block; padding: 1px 5px; border-radius: 8px; font-size: 9px; color: white; margin-left: 4px; vertical-align: middle; }
@@ -466,6 +467,7 @@
                                 </div>
                                 <div class="region">{{ getRegionName(place.region) }} · {{ place.area || '' }}</div>
                             </div>
+                            <div v-if="dragState.overGroup === gi && dragState.draggingPlace !== null" class="place-placeholder" :class="{ 'drag-over': dragState.overGroup === gi }"></div>
                             <button class="add-place-btn" @click="addPlace(gi)">+ 新增地點</button>
                         </div>
                     </div>
