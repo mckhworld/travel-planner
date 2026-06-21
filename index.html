@@ -100,9 +100,7 @@
         .place-item { padding: 8px 10px; margin: 3px 0; background: white; border-radius: 6px; cursor: pointer; transition: all 0.2s; border-left: 4px solid; position: relative; }
         .place-item:hover { transform: translateX(3px); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
         .place-item.selected { box-shadow: 0 0 0 2px rgba(102,126,234,0.4); background: #f0f4ff; }
-        .place-item.drag-over-above { border-top: 3px solid #667eea; margin-bottom: 8px; }
-        .place-item.drag-over-below { border-bottom: 3px solid #667eea; margin-top: 8px; }
-        .place-item.drag-over { border-top: 2px solid #667eea; }
+        .place-item.drag-over { border-top: 3px solid #667eea; margin-top: -1px; }
         .place-item .name { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
         .place-item .region { font-size: 10px; color: #666; }
         .place-item .type-badge { display: inline-block; padding: 1px 5px; border-radius: 8px; font-size: 9px; color: white; margin-left: 4px; vertical-align: middle; }
@@ -455,9 +453,7 @@
                                  class="place-item"
                                  :class="{
                                      selected: selectedPlace && selectedPlace.groupIndex === gi && selectedPlace.placeIndex === pi,
-                                     'drag-over': dragState.overGroup === gi && dragState.overPlaceIndex === pi,
-                                     'drag-over-above': dragState.overGroup === gi && dragState.overPlaceIndex === pi && dragState.dragOverPosition === 'above',
-                                     'drag-over-below': dragState.overGroup === gi && dragState.overPlaceIndex === pi && dragState.dragOverPosition === 'below'
+                                     'drag-over': dragState.overGroup === gi && dragState.overPlaceIndex === pi
                                  }"
                                  :style="{ borderLeftColor: PLACE_TYPES[place.type]?.color || '#999' }"
                                  draggable="true"
@@ -1410,12 +1406,11 @@ function importPlan(data) {
                 e.dataTransfer.setData('text/plain', '')
             }
             const onDragOverPlace = (gi, pi, e) => {
+                // Only highlight the target place
                 dragState.overGroup = gi
                 dragState.overPlaceIndex = pi
-                // Determine if dragging above or below the target place
-                const rect = e.currentTarget.getBoundingClientRect()
-                const offset = e.clientY - rect.top
-                dragState.dragOverPosition = offset < rect.height / 2 ? 'above' : 'below'
+                // Reset other places' highlight by clearing overGroup for non-targets
+                // This is handled by the template's class binding
             }
             const onDropOnPlace = (gi, pi, e) => {
                 e.preventDefault()
