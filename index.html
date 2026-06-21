@@ -213,8 +213,8 @@
         }
         .plan-list-item {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column;
+            gap: 4px;
             padding: 12px;
             border: 1px solid #dee2e6;
             border-radius: 8px;
@@ -228,7 +228,11 @@
         .plan-list-item:not(.active):hover {
             background: #f8f9fa;
         }
-        .plan-info { flex: 1; min-width: 0; }
+        .plan-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
         .plan-info-name {
             font-weight: 600;
             font-size: 14px;
@@ -240,11 +244,11 @@
         .plan-info-meta {
             font-size: 11px;
             color: #999;
-            margin-top: 2px;
         }
         .plan-actions {
             display: flex;
             gap: 4px;
+            justify-content: flex-end;
         }
         .plan-actions button {
             padding: 6px 10px;
@@ -617,10 +621,10 @@
                         </div>
                     </div>
                     <div class="plan-actions">
-                        <button class="plan-load-btn" @click.stop="doLoadPlan(plan.id)">載入</button>
-                        <button class="plan-download-btn" @click.stop="downloadPlanData(plan)">📥</button>
-                        <button class="plan-rename-btn" @click.stop="startRenamePlan(plan)">✏️</button>
-                        <button class="plan-delete-btn" @click.stop="doDeletePlan(plan.id)" v-if="Object.keys(allPlansObjRef).length > 1">刪除</button>
+                        <button class="plan-load-btn" @click.stop="doLoadPlan(plan.id)" title="載入行程">載入</button>
+                        <button class="plan-download-btn" @click.stop="downloadPlanData(plan)" title="下載行程">📥</button>
+                        <button class="plan-rename-btn" @click.stop="startRenamePlan(plan)" title="重新命名">✏️</button>
+                        <button class="plan-delete-btn" @click.stop="doDeletePlan(plan.id)" v-if="Object.keys(allPlansObjRef).length > 1" title="刪除行程">刪除</button>
                     </div>
                 </div>
                 <div class="plan-list-empty" v-if="!allPlansListRef || allPlansListRef.length === 0">
