@@ -994,6 +994,14 @@
 // ===== MULTI-PLAN STORAGE =====
 const PLANS_STORAGE_KEY = 'travel-map-plans'
 let hasInteracted = false
+let initialSnapshot = ''
+function getDirtyState() {
+    const plansData = getAllPlans()
+    if (!plansData) return ''
+    const current = plansData.plans[plansData.currentPlanId]
+    if (!current) return ''
+    return JSON.stringify({ groups: current.groups, _meta: current._meta })
+}
 
 function getAllPlans() {
     const raw = localStorage.getItem(PLANS_STORAGE_KEY)
@@ -1503,6 +1511,7 @@ function importPlan(data) {
                     currentPlanIdVal.value = plansData.currentPlanId
                 }
                 refreshPlanRefs()
+                initialSnapshot = getDirtyState()
                 initMap()
                 // Fix Leaflet map sizing
                 setTimeout(() => { map.invalidateSize() }, 200)
@@ -1512,9 +1521,8 @@ function importPlan(data) {
                 document.addEventListener('click', () => { hasInteracted = true }, { once: true })
                 window.addEventListener('resize', checkMobile)
                 window.addEventListener('beforeunload', (e) => {
-                    if (hasInteracted) {
-                        const data = localStorage.getItem(PLANS_STORAGE_KEY)
-                        if (data) { e.preventDefault(); e.returnValue = '' }
+                    if (hasInteracted && getDirtyState() !== initialSnapshot) {
+                        e.preventDefault(); e.returnValue = ''
                     }
                 })
             })
