@@ -105,6 +105,7 @@
         .place-item .name { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
         .place-item .region { font-size: 10px; color: #666; }
         .place-item .type-badge { display: inline-block; padding: 1px 5px; border-radius: 8px; font-size: 9px; color: white; margin-left: 4px; vertical-align: middle; }
+        .place-item .no-coords-badge { display: inline-block; margin-left: 4px; vertical-align: middle; font-size: 10px; cursor: help; }
         .add-place-btn { width: 100%; padding: 8px; border: 1px dashed #ccc; border-radius: 6px; background: none; color: #667eea; cursor: pointer; font-size: 12px; margin-top: 4px; }
         .add-place-btn:hover { background: #f0f4ff; border-color: #667eea; }
         .add-group-section { padding: 8px 16px; border-top: 1px solid #dee2e6; background: white; }
@@ -466,6 +467,7 @@
                                  @click="selectFilteredPlace(gi, pi)">
                                 <div class="name">{{ place.emoji || '📍' }} {{ place.name || '未命名' }}
                                     <span class="type-badge" :style="{ backgroundColor: PLACE_TYPES[place.type]?.color || '#607D8B' }">{{ PLACE_TYPES[place.type]?.name || place.type }}</span>
+                                    <span v-if="!place.lat || !place.lng" class="no-coords-badge" title="Missing coordinates">🚫</span>
                                 </div>
                                 <div class="region">{{ getRegionName(place.region) }} · {{ place.area || '' }}</div>
                             </div>
@@ -574,10 +576,10 @@
                     <div class="form-field">
                         <label>連結</label>
                         <div v-for="(link, i) in currentPlace.links" :key="i" class="link-row">
-                            <input v-model="currentPlace.links[i]" placeholder="https://..." />
-                            <button @click="currentPlace.links.splice(i, 1)" v-if="currentPlace.links.length > 1">✕</button>
+                            <input v-model="currentPlace.links[i]" placeholder="https://..." @input="updatePlaceLinks(currentPlace, currentPlace.links)" />
+                            <button @click="currentPlace.links.splice(i, 1); updatePlaceLinks(currentPlace, currentPlace.links)" v-if="currentPlace.links.length > 1">✕</button>
                         </div>
-                        <button class="add-link-btn" @click="currentPlace.links.push('')">+ 新增連結</button>
+                        <button class="add-link-btn" @click="currentPlace.links.push(''); updatePlaceLinks(currentPlace, currentPlace.links)">+ 新增連結</button>
                     </div>
                     <div class="form-actions">
                         <span class="save-status">💾 已自動儲存</span>
@@ -720,15 +722,19 @@
 
     // ==================== DEFAULT DATA ====================
     const DEFAULT_DATA = {
+        id: crypto.randomUUID(),
+        name: '預設行程',
         groups: [
             {
-                id: 'g_main',
+                id: crypto.randomUUID(),
                 name: '主要群組',
                 emoji: '📌',
                 collapsed: false,
+                created: new Date().toISOString(),
+                modified: new Date().toISOString(),
                 places: [
                     {
-                        id: crypto.randomUUID ? crypto.randomUUID() : 'tokyo-tower',
+                        id: crypto.randomUUID(),
                         name: '東京塔',
                         emoji: '🗼',
                         lat: 35.6586,
@@ -740,10 +746,12 @@
                         notes: '',
                         ai_notes: '',
                         address: '東京都港区芝公園4丁目2-8',
-                        links: ['https://www.tokyotower.co.jp/']
+                        links: ['https://www.tokyotower.co.jp/'],
+                        created: new Date().toISOString(),
+                        modified: new Date().toISOString()
                     },
                     {
-                        id: crypto.randomUUID ? crypto.randomUUID() : 'sensoji',
+                        id: crypto.randomUUID(),
                         name: '淺草寺',
                         emoji: '⛩️',
                         lat: 35.7148,
@@ -755,10 +763,12 @@
                         notes: '',
                         ai_notes: '',
                         address: '東京都台東區淺草2丁目3-1',
-                        links: []
+                        links: [],
+                        created: new Date().toISOString(),
+                        modified: new Date().toISOString()
                     },
                     {
-                        id: crypto.randomUUID ? crypto.randomUUID() : 'meiji-jingu',
+                        id: crypto.randomUUID(),
                         name: '明治神宮',
                         emoji: '🏯',
                         lat: 35.6764,
@@ -770,10 +780,12 @@
                         notes: '',
                         ai_notes: '',
                         address: '東京都澀谷區代代木神園町1-1',
-                        links: []
+                        links: [],
+                        created: new Date().toISOString(),
+                        modified: new Date().toISOString()
                     },
                     {
-                        id: crypto.randomUUID ? crypto.randomUUID() : 'shinjuku-gyoen',
+                        id: crypto.randomUUID(),
                         name: '新宿御苑',
                         emoji: '🌸',
                         lat: 35.6852,
@@ -785,10 +797,12 @@
                         notes: '',
                         ai_notes: '',
                         address: '東京都新宿區新宿御苑前町11',
-                        links: ['https://www.katsuura-kyoen.go.jp/']
+                        links: ['https://www.katsuura-kyoen.go.jp/'],
+                        created: new Date().toISOString(),
+                        modified: new Date().toISOString()
                     },
                     {
-                        id: crypto.randomUUID ? crypto.randomUUID() : 'tsukiji',
+                        id: crypto.randomUUID(),
                         name: '築地場外市場',
                         emoji: '🐟',
                         lat: 35.6654,
@@ -800,10 +814,12 @@
                         notes: '',
                         ai_notes: '',
                         address: '東京都中央區築地4-16',
-                        links: []
+                        links: [],
+                        created: new Date().toISOString(),
+                        modified: new Date().toISOString()
                     },
                     {
-                        id: crypto.randomUUID ? crypto.randomUUID() : 'roppongi',
+                        id: crypto.randomUUID(),
                         name: '六本木新城',
                         emoji: '🏙️',
                         lat: 35.6604,
@@ -815,12 +831,19 @@
                         notes: '',
                         ai_notes: '',
                         address: '東京都港區六本木6丁目10-1',
-                        links: ['https://www.roppongihills.com/']
+                        links: ['https://www.roppongihills.com/'],
+                        created: new Date().toISOString(),
+                        modified: new Date().toISOString()
                     }
                 ]
             }
         ],
-        _meta: { version: '1.0', lastSaved: new Date().toISOString() }
+        _meta: {
+            version: '1.0',
+            created: new Date().toISOString(),
+            modified: new Date().toISOString(),
+            lastSaved: new Date().toISOString()
+        }
     }
 
     // ==================== APP ====================
@@ -1041,11 +1064,34 @@ function createPlan(name) {
         finalName = `${name} (${counter})`
         counter++
     }
-    const planId = 'plan_' + Date.now()
+    const planId = crypto.randomUUID()
+    
+    // Create groups with timestamps
+    const now = new Date().toISOString()
+    const defaultGroups = JSON.parse(JSON.stringify(DEFAULT_DATA.groups))
+    const newGroups = defaultGroups.map(g => ({
+        ...g,
+        id: crypto.randomUUID(),
+        created: now,
+        modified: now,
+        places: g.places.map(p => ({
+            ...p,
+            id: crypto.randomUUID(),
+            created: now,
+            modified: now
+        }))
+    }))
+    
     plansData.plans[planId] = {
+        id: planId,
         name: finalName,
-        groups: JSON.parse(JSON.stringify(DEFAULT_DATA.groups)),
-        _meta: { version: '1.0', lastSaved: new Date().toISOString() }
+        groups: newGroups,
+        _meta: { 
+            version: '1.0',
+            created: now,
+            modified: now,
+            lastSaved: now
+        }
     }
     plansData.currentPlanId = planId
     localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
@@ -1078,11 +1124,33 @@ function importPlan(data) {
         planName = `${baseName}_${new Date().toISOString().replace(/[T:]/g, '-').slice(0, 19)}_${counter}`
         counter++
     }
-    const planId = 'plan_' + Date.now()
+    const planId = crypto.randomUUID()
+    const now = new Date().toISOString()
+    
+    // Import groups with timestamps
+    const importedGroups = data.groups.map(g => ({
+        ...g,
+        id: g.id || crypto.randomUUID(),
+        created: g.created || now,
+        modified: now,
+        places: g.places.map(p => ({
+            ...p,
+            id: p.id || crypto.randomUUID(),
+            created: p.created || now,
+            modified: now
+        }))
+    }))
+    
     plansData.plans[planId] = {
+        id: planId,
         name: planName,
-        groups: JSON.parse(JSON.stringify(data.groups)),
-        _meta: { version: '1.0', lastSaved: new Date().toISOString() }
+        groups: importedGroups,
+        _meta: { 
+            version: '1.0',
+            created: now,
+            modified: now,
+            lastSaved: now
+        }
     }
     plansData.currentPlanId = planId
     localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
@@ -1094,7 +1162,19 @@ function importPlan(data) {
             const downloadJSON = () => {
                 const currentPlansData = getAllPlans()
                 const planName = (currentPlansData?.plans[currentPlansData.currentPlanId]?.name || '旅行地圖')
-                const data = { groups: groups.value, _meta: { version: '1.0', lastSaved: new Date().toISOString(), planName } }
+                const plan = currentPlansData.plans[currentPlansData.currentPlanId]
+                const data = { 
+                    id: plan.id,
+                    name: plan.name,
+                    groups: JSON.parse(JSON.stringify(plan.groups)),
+                    _meta: { 
+                        version: '1.0', 
+                        created: plan._meta.created,
+                        modified: plan._meta.modified,
+                        lastSaved: new Date().toISOString(),
+                        planName 
+                    } 
+                }
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
                 const url = URL.createObjectURL(blob)
                 const a = document.createElement('a')
@@ -1104,7 +1184,18 @@ function importPlan(data) {
                 URL.revokeObjectURL(url)
             }
             const downloadPlanData = (plan) => {
-                const data = { groups: JSON.parse(JSON.stringify(plan.groups)), _meta: { version: '1.0', lastSaved: new Date().toISOString(), planName: plan.name } }
+                const data = { 
+                    id: plan.id,
+                    name: plan.name,
+                    groups: JSON.parse(JSON.stringify(plan.groups)),
+                    _meta: { 
+                        version: '1.0',
+                        created: plan._meta.created,
+                        modified: plan._meta.modified,
+                        lastSaved: new Date().toISOString(),
+                        planName: plan.name 
+                    } 
+                }
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
                 const url = URL.createObjectURL(blob)
                 const a = document.createElement('a')
@@ -1194,7 +1285,9 @@ function importPlan(data) {
                 if (!selectedPlace.value) return
                 const { groupIndex, placeIndex } = selectedPlace.value
                 if (groups.value[groupIndex] && groups.value[groupIndex].places[placeIndex]) {
+                    const now = new Date().toISOString()
                     groups.value[groupIndex].places[placeIndex].region = value
+                    groups.value[groupIndex].places[placeIndex].modified = now
                 }
                 const placeId = groups.value[groupIndex].places[placeIndex].id
                 dropdownVisibility[placeId + '_region'] = false
@@ -1203,7 +1296,9 @@ function importPlan(data) {
                 if (!selectedPlace.value) return
                 const { groupIndex, placeIndex } = selectedPlace.value
                 if (groups.value[groupIndex] && groups.value[groupIndex].places[placeIndex]) {
+                    const now = new Date().toISOString()
                     groups.value[groupIndex].places[placeIndex].type = value
+                    groups.value[groupIndex].places[placeIndex].modified = now
                 }
                 const placeId = groups.value[groupIndex]?.places[placeIndex]?.id
                 dropdownVisibility[placeId + '_type'] = false
@@ -1212,7 +1307,9 @@ function importPlan(data) {
                 if (!selectedPlace.value) return
                 const { groupIndex, placeIndex } = selectedPlace.value
                 if (groups.value[groupIndex] && groups.value[groupIndex].places[placeIndex]) {
+                    const now = new Date().toISOString()
                     groups.value[groupIndex].places[placeIndex].area = value
+                    groups.value[groupIndex].places[placeIndex].modified = now
                 }
                 const placeId = groups.value[groupIndex].places[placeIndex].id
                 dropdownVisibility[placeId + '_area'] = false
@@ -1235,40 +1332,77 @@ function importPlan(data) {
                 }
             }
             const addPlace = (gi) => {
+                const now = new Date().toISOString()
                 const newPlace = {
-                    id: generateId(),
+                    id: crypto.randomUUID(),
                     name: '', emoji: '📍',
                     lat: 0, lng: 0,
                     region: '', type: 'sightseeing',
-                    area: '', hours: '', notes: '', ai_notes: '', address: '', links: []
+                    area: '', hours: '', notes: '', ai_notes: '', address: '', links: [],
+                    created: now,
+                    modified: now
                 }
                 groups.value[gi].places.push(newPlace)
+                
+                // Update timestamps
+                updateGroupModified(groups.value[gi], now)
+                updatePlanModified(now)
+                
                 nextTick(() => selectPlace(gi, groups.value[gi].places.length - 1))
             }
             const deletePlace = (gi, pi) => {
                 if (!confirm(`確定刪除「${groups.value[gi].places[pi].name}」？`)) return
                 groups.value[gi].places.splice(pi, 1)
                 closeDetail()
+                
+                // Update timestamps
+                const now = new Date().toISOString()
+                updateGroupModified(groups.value[gi], now)
+                updatePlanModified(now)
             }
             const addGroup = () => {
                 if (!newGroupForm.name.trim()) return
+                const now = new Date().toISOString()
                 groups.value.push({
-                    id: generateId(),
+                    id: crypto.randomUUID(),
                     name: newGroupForm.name.trim(),
                     emoji: newGroupForm.emoji,
                     collapsed: false,
+                    created: now,
+                    modified: now,
                     places: []
                 })
                 newGroupForm.name = ''
                 newGroupForm.emoji = '📌'
                 showAddGroupForm.value = false
+                
+                // Update timestamps
+                const currentPlan = getAllPlans()
+                if (currentPlan && currentPlan.currentPlanId) {
+                    const plan = currentPlan.plans[currentPlan.currentPlanId]
+                    if (plan) {
+                        plan._meta.modified = now
+                        localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(currentPlan))
+                    }
+                }
             }
             const deleteGroup = (gi) => {
                 if (groups.value.length <= 1) return
                 if (!confirm(`確定刪除群組「${groups.value[gi].name}」？其中的地點將移至第一個群組。`)) return
+                const now = new Date().toISOString()
                 const group = groups.value.splice(gi, 1)[0]
                 if (group.places.length > 0) {
                     groups.value[0].places.push(...group.places)
+                }
+                
+                // Update timestamps
+                const currentPlan = getAllPlans()
+                if (currentPlan && currentPlan.currentPlanId) {
+                    const plan = currentPlan.plans[currentPlan.currentPlanId]
+                    if (plan) {
+                        plan._meta.modified = now
+                        localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(currentPlan))
+                    }
                 }
             }
             const clearFilter = () => { filter.search = ''; filter.type = null }
@@ -1385,7 +1519,16 @@ function importPlan(data) {
             const updateFieldType = (event) => {
                 const p = currentPlace.value
                 if (!p) return
+                const now = new Date().toISOString()
                 p.type = event.target.value
+                p.modified = now
+            }
+            
+            const updatePlaceLinks = (place, links) => {
+                if (!place) return
+                const now = new Date().toISOString()
+                place.links = links
+                place.modified = now
             }
 
             // ===== EMOJI PICKER =====
@@ -1394,10 +1537,14 @@ function importPlan(data) {
             const selectEmoji = (emoji) => {
                 if (!emojiPickerTarget.value) return
                 const { type, groupIndex, placeIndex } = emojiPickerTarget.value
+                const now = new Date().toISOString()
+                
                 if (type === 'group') {
                     groups.value[groupIndex].emoji = emoji
+                    groups.value[groupIndex].modified = now
                 } else if (type === 'place') {
                     groups.value[groupIndex].places[placeIndex].emoji = emoji
+                    groups.value[groupIndex].places[placeIndex].modified = now
                 }
                 showEmojiPicker.value = false
             }
@@ -1422,6 +1569,8 @@ function importPlan(data) {
                 e.preventDefault()
                 if (!dragState.draggingPlace) return
                 const { groupIndex: fromGi, placeIndex: fromPi } = dragState.draggingPlace
+                const now = new Date().toISOString()
+                
                 if (fromGi === gi) {
                     // Reorder within same group
                     const place = groups.value[fromGi].places.splice(fromPi, 1)[0]
@@ -1433,6 +1582,14 @@ function importPlan(data) {
                     const place = fromGroup.places.splice(fromPi, 1)[0]
                     toGroup.places.splice(pi, 0, place)
                 }
+                
+                // Update timestamps for groups and plan
+                updateGroupModified(groups.value[gi], now)
+                if (fromGi !== gi) {
+                    updateGroupModified(groups.value[fromGi], now)
+                }
+                updatePlanModified(now)
+                
                 dragState.draggingPlace = null
                 dragState.overGroup = null
                 dragState.overPlaceIndex = null
@@ -1453,6 +1610,8 @@ function importPlan(data) {
             }
             const onDropOnGroup = (gi, e) => {
                 e.preventDefault()
+                const now = new Date().toISOString()
+                
                 if (dragState.draggingGroup !== null) {
                     // Reorder groups
                     const fromGi = dragState.draggingGroup
@@ -1460,6 +1619,9 @@ function importPlan(data) {
                         const group = groups.value.splice(fromGi, 1)[0]
                         groups.value.splice(gi, 0, group)
                     }
+                    updatePlanModified(now)
+                    // Update all groups' modified timestamps since order changed
+                    groups.value.forEach(g => updateGroupModified(g, now))
                 } else if (dragState.draggingPlace) {
                     // Move place to end of group
                     const { groupIndex: fromGi, placeIndex: fromPi } = dragState.draggingPlace
@@ -1467,12 +1629,43 @@ function importPlan(data) {
                     const toGroup = groups.value[gi]
                     const place = fromGroup.places.splice(fromPi, 1)[0]
                     toGroup.places.push(place)
+                    
+                    updateGroupModified(toGroup, now)
+                    if (fromGi !== gi) {
+                        updateGroupModified(fromGroup, now)
+                    }
+                    updatePlanModified(now)
                 }
+                
                 dragState.draggingGroup = null
                 dragState.draggingPlace = null
                 dragState.overGroup = null
                 dragState.overPlaceIndex = null
                 dragState.dragOverPosition = null
+            }
+
+            // ===== TIMESTAMP HELPERS =====
+            function updateGroupModified(group, timestamp) {
+                if (group && group.modified !== undefined) {
+                    group.modified = timestamp
+                }
+            }
+            
+            function updatePlaceModified(place, timestamp) {
+                if (place && place.modified !== undefined) {
+                    place.modified = timestamp
+                }
+            }
+            
+            function updatePlanModified(timestamp) {
+                const plansData = getAllPlans()
+                if (plansData && plansData.currentPlanId && plansData.plans[plansData.currentPlanId]) {
+                    const plan = plansData.plans[plansData.currentPlanId]
+                    if (plan._meta && plan._meta.modified !== undefined) {
+                        plan._meta.modified = timestamp
+                        localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
+                    }
+                }
             }
 
             // ===== MAP =====
@@ -1538,7 +1731,7 @@ function importPlan(data) {
                             })
                         }).addTo(map)
                         marker.bindPopup(`
-                            <h3>${place.emoji || '📍'} ${place.name}</h3>
+                            <h3>${place.emoji || '📍'} ${place.name} ${!place.lat || !place.lng ? '🚫' : ''}</h3>
                             <span class="region-badge" style="background-color: ${getGroupColor(gi)}">${getRegionName(place.region)}</span>
                             <span class="type-badge" style="background-color: ${typeInfo.color}">${typeInfo.name}</span>
                             ${place.hours ? `<p style="margin-top: 6px; font-size: 12px;">🕐 ${place.hours}</p>` : ''}
@@ -1558,6 +1751,15 @@ function importPlan(data) {
             // ===== WATCH =====
             watch(groups, () => {
                 nextTick(() => updateMarkers())
+                // Update place modified timestamps on any change
+                const now = new Date().toISOString()
+                groups.value.forEach(g => {
+                    g.places.forEach(p => {
+                        if (p && p.modified !== undefined) {
+                            p.modified = now
+                        }
+                    })
+                })
                 saveToLocalStorage()
             }, { deep: true })
 
@@ -1598,7 +1800,8 @@ function importPlan(data) {
                 const current = plansData.plans[plansData.currentPlanId]
                 if (current) {
                     current.groups = JSON.parse(JSON.stringify(groups.value))
-                    current._meta = { version: '1.0', lastSaved: new Date().toISOString() }
+                    const now = new Date().toISOString()
+                    current._meta.lastSaved = now
                     localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
                 }
             }
@@ -1612,10 +1815,52 @@ function importPlan(data) {
                     try {
                         const oldData = JSON.parse(oldRaw)
                         if (oldData.groups && Array.isArray(oldData.groups)) {
-                            const planId = 'plan_' + Date.now()
+                            const now = new Date().toISOString()
+                            // Convert old plan to UUID-based format with timestamps
+                            const planId = crypto.randomUUID()
+                            
+                            // Migrate groups with IDs and timestamps
+                            const migratedGroups = oldData.groups.map(g => ({
+                                id: g.id || crypto.randomUUID(),
+                                name: g.name,
+                                emoji: g.emoji,
+                                collapsed: g.collapsed,
+                                created: now,
+                                modified: now,
+                                places: g.places.map(p => ({
+                                    id: p.id || crypto.randomUUID(),
+                                    name: p.name,
+                                    emoji: p.emoji,
+                                    lat: p.lat,
+                                    lng: p.lng,
+                                    region: p.region,
+                                    type: p.type,
+                                    area: p.area,
+                                    hours: p.hours,
+                                    notes: p.notes,
+                                    ai_notes: p.ai_notes,
+                                    address: p.address,
+                                    links: p.links || [],
+                                    created: now,
+                                    modified: now
+                                }))
+                            }))
+                            
                             plansData = {
                                 currentPlanId: planId,
-                                plans: { [planId]: JSON.parse(JSON.stringify(oldData)) }
+                                plans: { 
+                                    [planId]: {
+                                        id: planId,
+                                        name: oldData.name || '預設行程',
+                                        groups: migratedGroups,
+                                        _meta: {
+                                            version: '1.0',
+                                            created: now,
+                                            modified: now,
+                                            lastSaved: now
+                                        }
+                                    }
+                                }
                             }
                             localStorage.setItem(PLANS_STORAGE_KEY, JSON.stringify(plansData))
                             localStorage.removeItem(oldKey)

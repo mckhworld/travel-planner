@@ -1,0 +1,1573 @@
+{
+  "name": "2026年11月東京旅行",
+  "description": "Tokyo travel plan from 2026-10-31 to 2026-11-08",
+  "places": [
+    {
+      "name": "有樂町 飯團 よこみぞゆり (no store, delivery)",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "送貨/popup shop (要睇X/IG) | 水準非常高，可能收不到本站通知",
+      "website": "https://yokomizoyuri.com/shops/norionigiriya",
+      "phone": "",
+      "business_hours": "11:00-21:00",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "川越",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "何不來趟日常旅行？;月之活動暢遊課程",
+      "website": "https://www.city.kawagoe.saitama.jp/",
+      "phone": "",
+      "business_hours": "10:00-21:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "川越 星巴克",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "川越站エキア店。另有ルミネ川越店。",
+      "website": "https://store.starbucks.co.jp/detail-1554/",
+      "phone": "",
+      "business_hours": "08:00-20:00",
+      "tags": [
+        "Coffee"
+      ]
+    },
+    {
+      "name": "川越 時之鐘",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "川越在地標。每天4次敲鐘。免費參觀。",
+      "website": "https://koedo.or.jp/spot_001/",
+      "phone": "",
+      "business_hours": "每天早上6點、中午12點、下午3點和6點敲鐘",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "川越 一番街（老街巡禮）",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "因火災幕府鼓勵瓦頂建築，作為防火建築的江戶町;倉庫建築流行。",
+      "website": "https://kawagoe-ichibangai.com/",
+      "phone": "",
+      "business_hours": "11:00-17:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "Miffy kitchen&Bakery",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "川越店限定的紅薯麵包、米飛兔吐司",
+      "website": "http://miffykitchenbakery.jp/",
+      "phone": "",
+      "business_hours": "10:00-18:00",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "\"和心 −器と卵かけごはん− 和心 雞蛋拌飯專門店\"",
+      "address": "埼玉県川越市新富町1-6-11TDUビルB1",
+      "lat": 0,
+      "lng": 0,
+      "notes": "震震布丁是特色。有震震布丁和各種卵かけごはん。",
+      "website": "https://wagokoro.studio.site/",
+      "phone": "",
+      "business_hours": "11:00-17:00",
+      "tags": [
+        "Food",
+        "Lunch"
+      ]
+    },
+    {
+      "name": "焼き芋 COEDO HACHI 川越",
+      "address": "川越市元町2-1-6",
+      "lat": 0,
+      "lng": 0,
+      "notes": "紅薯經過醃製、儲存、精心烘烤。卡士達布丁也很受歡迎。",
+      "website": "https://coedohachi.jp/",
+      "phone": "",
+      "business_hours": "10:00-17:00",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "小江戸おさつ庵",
+      "address": "埼玉県川越市幸町15-21",
+      "lat": 0,
+      "lng": 0,
+      "notes": "地瓜片不添加糖，只灑少許鹽。",
+      "website": "",
+      "phone": "",
+      "business_hours": "11:00-17:00",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "LEMONADE by Lemonica",
+      "address": "埼玉県川越市元町2-9-19",
+      "lat": 0,
+      "lng": 0,
+      "notes": "獨家手法提取新鮮檸檬汁，加入特製糖漿調和。",
+      "website": "https://lemonade-by-lemonica.com/shops.html",
+      "phone": "",
+      "business_hours": "10:00-18:00",
+      "tags": [
+        "Food",
+        "Drink"
+      ]
+    },
+    {
+      "name": "川越布丁(川越プリン)",
+      "address": "埼玉県川越市幸町1-13",
+      "lat": 0,
+      "lng": 0,
+      "notes": "川越在地布丁名店。有網購選項。",
+      "website": "https://kawagoe-purin.com/",
+      "phone": "",
+      "business_hours": "11:00-17:00",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "宫崎骏大时钟",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "日電視塔 | mapuru web;日電視塔",
+      "website": "https://www.ntv.co.jp/oo-dokei/",
+      "phone": "",
+      "business_hours": "Mon-Fri 12:00, 15:00, 18:00, 20:00 | Sat,Sun 10:00, 12:00, 15:00, 18:00, 20:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "かに地獄 新橋",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "水產直送的螃蟹整齊排列在店內競賣，價格實惠",
+      "website": "https://yoyaku.toreta.in/kanijigoku/",
+      "phone": "",
+      "business_hours": "16:00-23:00",
+      "tags": [
+        "Food",
+        "Dinner"
+      ]
+    },
+    {
+      "name": "東京後樂園多美迎酒店 多美迎・御宿野乃",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "日間使用",
+      "website": "https://dormy-inn-korakuen.intokyohotels.com/tw/",
+      "phone": "",
+      "business_hours": "06:30-09:30",
+      "tags": [
+        "Hotel"
+      ]
+    },
+    {
+      "name": "草津",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "因應火口警戒級別提升，國道292號線封閉與草津白根山的",
+      "website": "https://hoshinoresorts.com/ja/hotels/kaikusatsu/",
+      "phone": "",
+      "business_hours": "24小時開放",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "草津溫泉湯畑",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "日同夜景色不同。夜晚有燈光裝飾。免費參觀。",
+      "website": "https://www.kusatsu-onsen.jp/",
+      "phone": "",
+      "business_hours": "24小時開放",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "清月堂 抹茶提拉米蘇",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "草津在地甜點名店。抹茶提拉米蘇是招牌。",
+      "website": "",
+      "phone": "",
+      "business_hours": "10:00-17:00",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "溫泉布丁, 釜飯都很出名",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "以清水研磨，一釜一釜精心烹煮。",
+      "website": "https://restaurant.ikyu.com/",
+      "phone": "",
+      "business_hours": "10:00-17:00",
+      "tags": [
+        "Food"
+      ]
+    },
+    {
+      "name": "草津溫泉布丁 本店",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "溫泉布丁和布丁雪糕是特色。用草津溫泉製作的布丁。",
+      "website": "",
+      "phone": "",
+      "business_hours": "10:00-17:00",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "熱乃湯",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "午前最後一場和午後第一場最多人。2/F影相靚D。官網有折扣券。",
+      "website": "https://www.hinoyuyu.com/",
+      "phone": "",
+      "business_hours": "湯揉表演每天6場",
+      "tags": [
+        "Sightseeing",
+        "Spa"
+      ]
+    },
+    {
+      "name": "おさ湯（osayu）",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "一樓猴子湯揉全程禁止拍照錄影。二樓可與水豚/兔子/貓咪互動。",
+      "website": "https://www.osayu.com/",
+      "phone": "",
+      "business_hours": "猴子湯揉表演多場",
+      "tags": [
+        "Sightseeing",
+        "Spa"
+      ]
+    },
+    {
+      "name": "草津ガラス蔵 温泉たまご",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "現場製作半熟溫泉蛋。用草津溫泉的硫磺蛋。",
+      "website": "https://kusatsu-garasuzako.com/",
+      "phone": "",
+      "business_hours": "10:00-17:00",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "柏香亭",
+      "address": "群馬縣吾妻郡草津町草津376",
+      "lat": 0,
+      "lng": 0,
+      "notes": "蕎麥麵名店，Tabelog評分3.62。炸舞菇必點。",
+      "website": "",
+      "phone": "",
+      "business_hours": "11:00-17:00",
+      "tags": [
+        "Food",
+        "Lunch"
+      ]
+    },
+    {
+      "name": "草津溫泉",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "日帰り温泉\"草津三湯\"",
+      "website": "https://www.kusatsu-onsen.ne.jp/top.php",
+      "phone": "",
+      "business_hours": "9:00-21:00",
+      "tags": [
+        "Sightseeing",
+        "Spa"
+      ]
+    },
+    {
+      "name": "草津温泉 和宿 高松酒店",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "",
+      "website": "",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Hotel"
+      ]
+    },
+    {
+      "name": "四萬溫泉",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "休館日通知;土日祝日限定再開",
+      "website": "http://www.shimakan.com/",
+      "phone": "",
+      "business_hours": "11:00-20:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "竹井橋＋四萬湖",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "海豚島好天氣🏝️☀️ 輕快舞步登場的Jun-kun",
+      "website": "https://www.jalan.net/kankou/spt_10421ab2030004409/",
+      "phone": "",
+      "business_hours": "24小時開放",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "四萬甌穴",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "休館日：年末年始·中元節·GW",
+      "website": "http://www.ouketsu.net/",
+      "phone": "",
+      "business_hours": "24小時開放",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "志摩亞馬赤坎日式旅館 Shima Yamaguchikan",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "",
+      "website": "",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Hotel"
+      ]
+    },
+    {
+      "name": "輕井澤 睇紅葉",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "旅行 享受藝術與文化的推薦課程",
+      "website": "https://koyo.walkerplus.com/detail/ar0310e13047/data.html",
+      "phone": "",
+      "business_hours": "8:45-17:45",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "白絲瀑布",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "輕井澤著名景點。瀑布落差20米，寬60米。步道需穿防滑鞋。",
+      "website": "https://www.karuizawa.gr.jp/shiraito/",
+      "phone": "",
+      "business_hours": "24小時開放",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "雲場池",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "紅葉季節特別美。從輕井澤站步行約30分鐘。",
+      "website": "https://www.karuizawa.gr.jp/unkubo/",
+      "phone": "",
+      "business_hours": "9:00-17:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "川上庵蕎麥麵 軽井沢 川上庵 本店",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "位於Harunire Terrace。招牌就是蕎麥麵。",
+      "website": "https://gogojp.tw/harunire-terrace/",
+      "phone": "",
+      "business_hours": "10:00-22:00",
+      "tags": [
+        "Food",
+        "Lunch"
+      ]
+    },
+    {
+      "name": "舊輕井澤銀座通",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "木製外觀，可以為您提供旅遊資訊。 再往前走一點，還可以看到邵逸",
+      "website": "https://karuizawa-kankokyokai.jp/spot/30092/",
+      "phone": "",
+      "business_hours": "8:45-17:45",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "榆樹街小鎮",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "Hoshino Resorts管理。P6、P7為免費停車場。",
+      "website": "https://www.hoshino-area.jp/zh-TW/harunire-terrace/",
+      "phone": "",
+      "business_hours": "各店營業時間不同，一般10:00-18:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "IKARU cafe",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "Hoshino Resorts旗下。IG熱門打卡點。靚樣咖啡。",
+      "website": "https://www.hoshino-area.jp/zh-TW/ikarucafe/",
+      "phone": "",
+      "business_hours": "10:00-17:00",
+      "tags": [
+        "Food",
+        "Coffee"
+      ]
+    },
+    {
+      "name": "村民食堂",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "Hoshino Resorts旗下。需排隊拿號碼牌。",
+      "website": "https://www.hoshino-area.jp/zh-TW/sonmin-shokudo/",
+      "phone": "",
+      "business_hours": "11:30-21:30",
+      "tags": [
+        "Food",
+        "Dinner"
+      ]
+    },
+    {
+      "name": "石之教堂",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "輕井澤著名教堂。由安藤忠雄設計。可舉行婚禮。",
+      "website": "https://www.ishinocapelle.jp/",
+      "phone": "",
+      "business_hours": "9:00-17:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "聖保羅天主教堂",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "輕井澤著名教堂。有YouTube影片介紹。",
+      "website": "https://st-pauls.jp/",
+      "phone": "",
+      "business_hours": "9:00-17:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "蜻蜓之湯 泡溫泉",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "Hoshino Resorts BEB5 Karuizawa住客專用溫泉。",
+      "website": "https://www.hoshino-area.jp/zh-TW/tonbo-no-yu/",
+      "phone": "",
+      "business_hours": "8:00-23:00",
+      "tags": [
+        "Spa"
+      ]
+    },
+    {
+      "name": "Hoshino Resorts Beb5 Karuizawa",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "(星野, 但平價)",
+      "website": "",
+      "phone": "",
+      "business_hours": "Check-in 15:00, Check-out 11:00",
+      "tags": [
+        "Hotel"
+      ]
+    },
+    {
+      "name": "丸山咖啡",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "本店只有咖啡和雪糕。分店有crepe。",
+      "website": "https://www.maruyama-coffee.jp/",
+      "phone": "",
+      "business_hours": "09:00-19:00",
+      "tags": [
+        "Food",
+        "Coffee"
+      ]
+    },
+    {
+      "name": "王子購物廣場 Outlet",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "大型Outlet商場。多個國際品牌。",
+      "website": "https://www.okinose.co.jp/karuizawa/",
+      "phone": "",
+      "business_hours": "10:00-20:00",
+      "tags": [
+        "Shopping"
+      ]
+    },
+    {
+      "name": "FUFU KARUIZAWA JAPAN",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "",
+      "website": "",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Hotel"
+      ]
+    },
+    {
+      "name": "The Roast Beef Rice JYU ザ・ローストビーフライス JYU",
+      "address": "東京都澀谷區澀谷2丁目22-16 TR大樓B1F",
+      "lat": 0,
+      "lng": 0,
+      "notes": "可透過AutoReserve預約。人氣牛肉蓋飯專門店。",
+      "website": "",
+      "phone": "",
+      "business_hours": "12:00-15:00, 17:00-22:00",
+      "tags": [
+        "Food",
+        "Lunch"
+      ]
+    },
+    {
+      "name": "町田松鼠園 町田リス園",
+      "address": "東京都町田市薬師台1-733-1",
+      "lat": 0,
+      "lng": 0,
+      "notes": "松鼠公園。週二休息。需預約。",
+      "website": "https://www.machida-risuen.com/",
+      "phone": "",
+      "business_hours": "10:00-17:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "法輪寺",
+      "address": "1 Chome-1-15 Nishiwaseda, Shinjuku City, Tokyo 169-0051日本",
+      "lat": 0,
+      "lng": 0,
+      "notes": "日蓮宗） | 寶蓮寺",
+      "website": "https://www.ho-rinji.com/",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "Car parking @ IKSPIARI shopping mall",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "Cost: ¥800 for the first hour, then ¥400 for each additional 30 minutes",
+      "website": "https://www.ikspiari.com/en/access/car.html",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Parking"
+      ]
+    },
+    {
+      "name": "迪士尼樂園 外伴手禮店「旅途愉快」Bon Voyage",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "",
+      "website": "",
+      "phone": "",
+      "business_hours": "08:00-22:00",
+      "tags": [
+        "Shopping"
+      ]
+    },
+    {
+      "name": "Kushiyaki Meat Man クシヤキ肉男Meat Man",
+      "address": "日本〒150-0043 Tokyo, Shibuya, Dogenzaka, 2 Chome−20−10 １階",
+      "lat": 0,
+      "lng": 0,
+      "notes": "",
+      "website": "https://teyandei.com/?page_id=18756",
+      "phone": "",
+      "business_hours": "17:00-23:30",
+      "tags": [
+        "Food",
+        "Dinner"
+      ]
+    },
+    {
+      "name": "挽肉と米 渋谷",
+      "address": "東京都澀谷區道玄坂 2-28-1 椎津大樓 3 樓",
+      "lat": 0,
+      "lng": 0,
+      "notes": "TableCheck可預約。官網有詳細預約說明。",
+      "website": "https://hikinikutocome.com/locations/shibuya",
+      "phone": "03-6455-2959",
+      "business_hours": "11:00-21:00",
+      "tags": [
+        "Food",
+        "Lunch"
+      ]
+    },
+    {
+      "name": "stand hiroki #ヒロキヤ渋谷",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "生牛肉飯每日限量30份，建議早到。",
+      "website": "https://hirokiya-group.com/",
+      "phone": "",
+      "business_hours": "17:00-23:00",
+      "tags": [
+        "Food",
+        "Dinner"
+      ]
+    },
+    {
+      "name": "赤阪冰川神社",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "",
+      "website": "https://www.akasakahikawa.or.jp/",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "哈利·波特與被詛咒的孩子 舞台劇",
+      "address": "TBS赤坂ACTシアター",
+      "lat": 0,
+      "lng": 0,
+      "notes": "赤坂站。已確認預訂。",
+      "website": "https://www.harrypotter-stage.jp/",
+      "phone": "",
+      "business_hours": "演出時間視節目表",
+      "tags": [
+        "Sightseeing",
+        "Theater"
+      ]
+    },
+    {
+      "name": "哈利·波特與 Cafe",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "哈利波特主題Cafe。可透過TableCheck預約。",
+      "website": "https://www.tablecheck.com/en/shops/harrypotter-tokyo/reserve",
+      "phone": "",
+      "business_hours": "11:00-21:00",
+      "tags": [
+        "Food",
+        "Coffee"
+      ]
+    },
+    {
+      "name": "哈利波特原宿旗艦店 ハリー・ポッター ショップ 原宿",
+      "address": "東京都渋谷区神宮前6-31-17",
+      "lat": 0,
+      "lng": 0,
+      "notes": "原宿店。哈利波特周邊商品。",
+      "website": "https://harrypotter-store.jp/",
+      "phone": "",
+      "business_hours": "11:00-21:00",
+      "tags": [
+        "Shopping"
+      ]
+    },
+    {
+      "name": "蕃 YORONIKU",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "TableCheck預約系統。每月1日00:00 (JST) 開放次月預約。",
+      "website": "https://yoroniku-ebisu.com/",
+      "phone": "",
+      "business_hours": "18:00-23:00",
+      "tags": [
+        "Food",
+        "Dinner"
+      ]
+    },
+    {
+      "name": "日枝大神社",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "日枝大神社社務所",
+      "website": "http://www.hiedaijinja.or.jp/",
+      "phone": "",
+      "business_hours": "9:30-16:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "江之電一日卷",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "要搭4次以上先抵",
+      "website": "",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Food"
+      ]
+    },
+    {
+      "name": "Cafe Yoridocoro",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "Yoridokoro 稻村崎分店現在只接受可以欣賞江之電列車線路景色的櫃檯座位的預訂。",
+      "website": "",
+      "phone": "",
+      "business_hours": "10:30-16:45",
+      "tags": [
+        "Food",
+        "Coffee"
+      ]
+    },
+    {
+      "name": "ダイレクトパーク 鎌倉七里ガ浜（停車場）",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "影本交道，少人",
+      "website": "",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Parking"
+      ]
+    },
+    {
+      "name": "咖哩包 - GIRAFFA",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "連續三年金賞",
+      "website": "https://giraffacurrypan.jp/",
+      "phone": "",
+      "business_hours": "11:00-20:00",
+      "tags": [
+        "Food"
+      ]
+    },
+    {
+      "name": "日式糰子串 - さくらの夢見屋",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "日本美食節目激推四色糰子",
+      "website": "https://tabihime.com/restaurant/sakura-no-yumemiya/",
+      "phone": "",
+      "business_hours": "10:00-18:00",
+      "tags": [
+        "Food"
+      ]
+    },
+    {
+      "name": "大佛造型今川燒 - ともや",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "金運・美人運・仕事運・恋愛運につながるのだとか。",
+      "website": "",
+      "phone": "",
+      "business_hours": "10:30-18:30",
+      "tags": [
+        "Food"
+      ]
+    },
+    {
+      "name": "鎌倉莓座",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "木座海岸正前方！",
+      "website": "https://aahbit.com/",
+      "phone": "",
+      "business_hours": "11:00-17:00",
+      "tags": [
+        "Food",
+        "Drink"
+      ]
+    },
+    {
+      "name": "屋台村",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "食海鮮串燒",
+      "website": "https://osaka-yataimura.com/",
+      "phone": "",
+      "business_hours": "12:00-23:30",
+      "tags": [
+        "Food"
+      ]
+    },
+    {
+      "name": "鎌倉五郎（半月燒）",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "半月形狀的法蘭酥",
+      "website": "https://www.kamakuragoro.co.jp/shop.html",
+      "phone": "",
+      "business_hours": "10:00-18:00",
+      "tags": [
+        "Food"
+      ]
+    },
+    {
+      "name": "鎌倉高校前 影平交道",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "好多人, 好難影相!",
+      "website": "https://ikuchannel.com/travel/slam-dunk-kamakura-pilgrimage-2026",
+      "phone": "",
+      "business_hours": "24小時開放",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "ことぶき屋鎌倉高校前店",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "定位呢個地方, 可以影到電車, 平交道, 海",
+      "website": "https://autoreserve.com/ja/restaurants/HKsnEwJ4Y93DoUy19zQM",
+      "phone": "",
+      "business_hours": "17:00-23:00",
+      "tags": [
+        "Food"
+      ]
+    },
+    {
+      "name": "鎌倉大佛殿高德院",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "",
+      "website": "",
+      "phone": "",
+      "business_hours": "08:00-16:45",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "魚見亭",
+      "address": "2 Chome-5-7 Enoshima, Fujisawa, Kanagawa 251-0036日本",
+      "lat": 0,
+      "lng": 0,
+      "notes": "日落海景位餐廳，門口取票，要選海景位票。",
+      "website": "",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Food",
+        "Dinner"
+      ]
+    },
+    {
+      "name": "ひもかわ桐生 池袋店",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "定休日：不定休",
+      "website": "https://himokawa-udon.com/",
+      "phone": "",
+      "business_hours": "11:00-15:30, 18:00-21:00",
+      "tags": [
+        "Food",
+        "Lunch"
+      ]
+    },
+    {
+      "name": "Butter Butler (東京車駅)",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "土日祝9:00～20:30",
+      "website": "https://sucreyshopping.jp/butterbutler/shoplist",
+      "phone": "",
+      "business_hours": "9:30-20:30",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "noix de beurre 法式甜品 ノワ・ドゥ・ブール 新宿伊勢丹店",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "東京橋/銀座/新宿均有分店。人氣法式甜品店，經常排隊。",
+      "website": "https://noixdebeurre.jp/",
+      "phone": "",
+      "business_hours": "10:00-20:00",
+      "tags": [
+        "Food",
+        "Snack"
+      ]
+    },
+    {
+      "name": "suscrea サスクリエ 表参道",
+      "address": "東京都港区南青山3-14-28 KRKビル 2F",
+      "lat": 0,
+      "lng": 0,
+      "notes": "薪火Omakase。米芝蓮二星主廚與創意料理大廚共同打造。",
+      "website": "",
+      "phone": "",
+      "business_hours": "晚餐服務",
+      "tags": [
+        "Food",
+        "Dinner"
+      ]
+    },
+    {
+      "name": "クロスケの家 (小黑炭的家)",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "龍貓相關景點。需提前2個月預約。",
+      "website": "https://www.totoro.or.jp/kurosuke/",
+      "phone": "",
+      "business_hours": "星期二,三,六 午前 10:00-12:00／午後 13:00-15:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "龍貓森林（トトロの森）",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "トトロの森。多摩地區。適合自然散步。",
+      "website": "https://tokyo.letsgojp.com/archives/283525/",
+      "phone": "",
+      "business_hours": "24小時開放",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "上高地",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "⚠️ 11月可能已接近封山期 (通常11月中旬開始)。需確認開放狀態。",
+      "website": "https://kamikochi.or.jp/",
+      "phone": "",
+      "business_hours": "11月-5月: 禁止進入",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "日本・岡山倉敷｜阿智神社",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "有愛心眉毛的達磨。",
+      "website": "",
+      "phone": "",
+      "business_hours": "9:00-17:00",
+      "tags": [
+        "Sightseeing"
+      ]
+    },
+    {
+      "name": "ダイレクトパーク 鎌倉七里ガ浜 （停車場）",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "影本交道，少人",
+      "website": "",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Parking"
+      ]
+    },
+    {
+      "name": "江之電一日卷 800yen",
+      "address": "",
+      "lat": 0,
+      "lng": 0,
+      "notes": "要搭4次以上先抵",
+      "website": "",
+      "phone": "",
+      "business_hours": "",
+      "tags": [
+        "Food"
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "name": "10/31 (六) - 有樂町 → 川越",
+      "description": "Day 1: Travel from airport to Kawagoe",
+      "places": [
+        {
+          "name": "有樂町 飯團 よこみぞゆり (no store, delivery)",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "川越",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "川越 星巴克",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "川越 時之鐘",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "川越 一番街（老街巡禮）",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "Miffy kitchen&Bakery",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "\"和心 −器と卵かけごはん− 和心 雞蛋拌飯專門店\"",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "焼き芋 COEDO HACHI 川越",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "小江戸おさつ庵",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "LEMONADE by Lemonica",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "川越布丁(川越プリン)",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "東京後樂園多美迎酒店 多美迎・御宿野乃",
+          "lat": 0,
+          "lng": 0
+        }
+      ]
+    },
+    {
+      "name": "11/1 (日) - 草津溫泉",
+      "description": "Day 2: Kusatsu Onsen",
+      "places": [
+        {
+          "name": "草津",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "草津溫泉湯畑",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "清月堂 抹茶提拉米蘇",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "溫泉布丁, 釜飯都很出名",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "草津溫泉布丁 本店",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "熱乃湯",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "おさ湯（osayu）",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "草津ガラス蔵 温泉たまご",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "柏香亭",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "草津溫泉",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "草津温泉 和宿 高松酒店",
+          "lat": 0,
+          "lng": 0
+        }
+      ]
+    },
+    {
+      "name": "11/2 (一) - 四萬溫泉",
+      "description": "Day 3: Shiomomaru Onsen",
+      "places": [
+        {
+          "name": "四萬溫泉",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "竹井橋＋四萬湖",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "四萬甌穴",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "志摩亞馬赤坎日式旅館 Shima Yamaguchikan",
+          "lat": 0,
+          "lng": 0
+        }
+      ]
+    },
+    {
+      "name": "11/3 (二) - 輕井澤",
+      "description": "Day 4: Karuizawa",
+      "places": [
+        {
+          "name": "輕井澤 睇紅葉",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "白絲瀑布",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "雲場池",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "川上庵蕎麥麵 軽井沢 川上庵 本店",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "舊輕井澤銀座通",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "榆樹街小鎮",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "IKARU cafe",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "村民食堂",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "石之教堂",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "聖保羅天主教堂",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "蜻蜓之湯 泡溫泉",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "Hoshino Resorts Beb5 Karuizawa",
+          "lat": 0,
+          "lng": 0
+        }
+      ]
+    },
+    {
+      "name": "11/4 (三) - 輕井澤",
+      "description": "Day 5: Karuizawa continued",
+      "places": [
+        {
+          "name": "丸山咖啡",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "王子購物廣場 Outlet",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "FUFU KARUIZAWA JAPAN",
+          "lat": 0,
+          "lng": 0
+        }
+      ]
+    },
+    {
+      "name": "11/5 (四) - 東京",
+      "description": "Day 6: Tokyo",
+      "places": [
+        {
+          "name": "The Roast Beef Rice JYU ザ・ローストビーフライス JYU",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "町田松鼠園 町田リス園",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "法輪寺",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "Car parking @ IKSPIARI shopping mall",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "迪士尼樂園 外伴手禮店「旅途愉快」Bon Voyage",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "Kushiyaki Meat Man クシヤキ肉男Meat Man",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "挽肉と米 渋谷",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "stand hiroki #ヒロキヤ渋谷",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "東京後樂園多美迎酒店 多美迎・御宿野乃",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "かに地獄 新橋",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "宫崎骏大时钟",
+          "lat": 0,
+          "lng": 0
+        }
+      ]
+    },
+    {
+      "name": "11/6 (五) - 哈利波特 & 赤阪",
+      "description": "Day 7: Harry Potter & Akasaka",
+      "places": [
+        {
+          "name": "赤阪冰川神社",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "哈利·波特與被詛咒的孩子 舞台劇",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "哈利·波特與 Cafe",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "哈利波特原宿旗艦店 ハリー・ポッター ショップ 原宿",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "蕃 YORONIKU",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "東京後樂園多美迎酒店 多美迎・御宿野乃",
+          "lat": 0,
+          "lng": 0
+        }
+      ]
+    },
+    {
+      "name": "11/7 (六) - 鎌倉",
+      "description": "Day 8: Kamakura",
+      "places": [
+        {
+          "name": "日枝大神社",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "江之電一日卷",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "Cafe Yoridocoro",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "ダイレクトパーク 鎌倉七里ガ浜（停車場）",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "咖哩包 - GIRAFFA",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "日式糰子串 - さくらの夢見屋",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "大佛造型今川燒 - ともや",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "鎌倉莓座",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "屋台村",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "鎌倉五郎（半月燒）",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "鎌倉高校前 影平交道",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "ことぶき屋鎌倉高校前店",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "鎌倉大佛殿高德院",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "魚見亭",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "東京後樂園多美迎酒店 多美迎・御宿野乃",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "ダイレクトパーク 鎌倉七里ガ浜 （停車場）",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "江之電一日卷 800yen",
+          "lat": 0,
+          "lng": 0
+        }
+      ]
+    },
+    {
+      "name": "11/8 (日) - 東京返程",
+      "description": "Day 9: Tokyo departure",
+      "places": [
+        {
+          "name": "ひもかわ桐生 池袋店",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "Butter Butler (東京車駅)",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "noix de beurre 法式甜品 ノワ・ドゥ・ブール 新宿伊勢丹店",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "suscrea サスクリエ 表参道",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "クロスケの家 (小黑炭的家)",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "龍貓森林（トトロの森）",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "上高地",
+          "lat": 0,
+          "lng": 0
+        },
+        {
+          "name": "日本・岡山倉敷｜阿智神社",
+          "lat": 0,
+          "lng": 0
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "created": "2026-06-21",
+    "source": "travel plan spreadsheet",
+    "version": "1.0"
+  }
+}
