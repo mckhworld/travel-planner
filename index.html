@@ -827,9 +827,9 @@
             const currentPlace = computed(() => {
                 const sp = selectedPlace.value
                 if (sp && sp.groupIndex != null && sp.placeIndex != null) {
-                    return groups.value[sp.groupIndex]?.places[sp.placeIndex] || null
+                    return groups.value[sp.groupIndex]?.places[sp.placeIndex] || {}
                 }
-                return null
+                return {}
             })
             const coordsInput = computed({
                 get: () => {
@@ -1596,7 +1596,7 @@ function importPlan(data) {
             }
 
             return {
-                groups, selectedPlace, filter, showEmojiPicker, emojiPickerTarget,
+                groups, selectedPlace, currentPlace, coordsInput, filter, showEmojiPicker, emojiPickerTarget,
                 showAddGroupForm, newGroupForm, dragState,
                 totalPlaces, totalTypes,
                 existingRegions, existingAreas, existingTypes, filterTypes,
