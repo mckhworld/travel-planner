@@ -1142,9 +1142,9 @@ function importPlan(data) {
                 if (isMobile.value) {
                     mobileSidebarOpen.value = false
                 }
-                // Fly to marker
+                // Fly to marker (keep current zoom, no animation)
                 if (markers[pi]) {
-                    map.setView([groups.value[gi].places[pi].lat, groups.value[gi].places[pi].lng], map.getZoom())
+                    map.setView([groups.value[gi].places[pi].lat, groups.value[gi].places[pi].lng], map.getZoom(), { animate: false })
                     // Delay openPopup to ensure Leaflet popup DOM is ready
                     setTimeout(() => { if (markers[pi]) markers[pi].openPopup() }, 50)
                 }
