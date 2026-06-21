@@ -1,0 +1,337 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mckhworld.github.io/travel-planner/import-file-schema.json",
+  "$title": "Travel Planner Import File Schema",
+  "$description": "Schema for travel plan JSON files compatible with https://mckhworld.github.io/travel-planner/\n\n## Supported Import Formats\n\n### Format 1: Travel Planner Export Format (Recommended)\nThis is the format exported by travel-planner. It includes required `id` fields for groups and places.\n\n### Format 2: Original Travel Plan Format (Legacy)\nThis format has a top-level `places` array and uses `metadata` instead of `_meta`. The travel-planner will try to import groups but may lose some data.\n\n## Schema for Format 1 (Travel Planner Export)\n",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/travelPlannerFormat"
+    },
+    {
+      "$ref": "#/$defs/originalFormat"
+    }
+  ],
+  "$defs": {
+    "travelPlannerFormat": {
+      "type": "object",
+      "required": ["id", "name", "groups"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the travel plan (UUID format)",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the travel plan"
+        },
+        "groups": {
+          "type": "array",
+          "description": "Array of travel plan groups (days)",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/group"
+          }
+        },
+        "_meta": {
+          "type": "object",
+          "description": "Metadata about the travel plan file",
+          "properties": {
+            "version": {
+              "type": "string",
+              "description": "Schema version (e.g., '1.0')",
+              "pattern": "^\\d+\\.\\d+$"
+            },
+            "created": {
+              "type": "string",
+              "description": "ISO 8601 timestamp when the plan was created",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+            },
+            "modified": {
+              "type": "string",
+              "description": "ISO 8601 timestamp when the plan was last modified",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+            },
+            "lastSaved": {
+              "type": "string",
+              "description": "ISO 8601 timestamp when the plan was last saved",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+            },
+            "planName": {
+              "type": "string",
+              "description": "Original plan name when exported"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "originalFormat": {
+      "type": "object",
+      "required": ["name", "groups"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the travel plan"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the travel plan"
+        },
+        "places": {
+          "type": "array",
+          "description": "Array of all places (used in original format, travel-planner may not use this)",
+          "items": {
+            "$ref": "#/$defs/place"
+          }
+        },
+        "groups": {
+          "type": "array",
+          "description": "Array of travel plan groups (days)",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/group"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Metadata about the travel plan file (original format)",
+          "properties": {
+            "created": {
+              "type": "string",
+              "description": "Creation timestamp"
+            },
+            "source": {
+              "type": "string",
+              "description": "Source of the travel plan"
+            },
+            "version": {
+              "type": "string",
+              "description": "Version of the travel plan"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "group": {
+      "type": "object",
+      "required": ["id", "name", "places"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the group (UUID format)",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the group (e.g., '10/31 (六) - 有樂町 → 川越')"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the group"
+        },
+        "emoji": {
+          "type": "string",
+          "description": "Emoji representing the group type (e.g., '📌', '📅')"
+        },
+        "collapsed": {
+          "type": "boolean",
+          "description": "Whether the group is collapsed in the UI"
+        },
+        "created": {
+          "type": "string",
+          "description": "ISO 8601 timestamp when the group was created",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+        },
+        "modified": {
+          "type": "string",
+          "description": "ISO 8601 timestamp when the group was last modified",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+        },
+        "places": {
+          "type": "array",
+          "description": "Array of places in this group",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/place"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "place": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the place (UUID format)",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the place"
+        },
+        "emoji": {
+          "type": "string",
+          "description": "Emoji representing the place type"
+        },
+        "lat": {
+          "type": "number",
+          "description": "Latitude coordinate (-90 to 90)",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "lng": {
+          "type": "number",
+          "description": "Longitude coordinate (-180 to 180)",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "region": {
+          "type": "string",
+          "description": "Region name (e.g., 'Tokyo', 'Kanagawa')"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of place",
+          "enum": [
+            "restaurant",
+            "hotel",
+            "snack",
+            "sightseeing",
+            "park",
+            "museum",
+            "temple",
+            "onsen",
+            "shopping",
+            "cafe",
+            "entertainment",
+            "nature",
+            "church",
+            "parking",
+            "transport",
+            "other"
+          ]
+        },
+        "area": {
+          "type": "string",
+          "description": "Specific area within the region (e.g., '港区', 'Minato')",
+          "maxLength": 100
+        },
+        "hours": {
+          "type": "string",
+          "description": "Business hours (e.g., '09:00-23:00', '11:00-17:00')"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Notes about the place"
+        },
+        "ai_notes": {
+          "type": "string",
+          "description": "AI-generated notes about the place"
+        },
+        "address": {
+          "type": "string",
+          "description": "Full address of the place"
+        },
+        "links": {
+          "type": "array",
+          "description": "Array of URLs related to the place",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "default": []
+        },
+        "created": {
+          "type": "string",
+          "description": "ISO 8601 timestamp when the place was created",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+        },
+        "modified": {
+          "type": "string",
+          "description": "ISO 8601 timestamp when the place was last modified",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "$comment": "Example: Travel Planner Export Format (Format 1)",
+      "id": "42466027-c542-4729-8b59-bcd9f0b92199",
+      "name": "2026年11月東京旅行",
+      "groups": [
+        {
+          "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "name": "10/31 (六) - 有樂町 → 川越",
+          "description": "Day 1: Travel from airport to Kawagoe",
+          "emoji": "📌",
+          "collapsed": false,
+          "created": "2026-06-21T15:30:18.673Z",
+          "modified": "2026-06-21T15:30:18.673Z",
+          "places": [
+            {
+              "id": "04c41c5b-8967-464f-bd5e-7af892210753",
+              "name": "有樂町 飯團 よこみぞゆり (no store, delivery)",
+              "emoji": "🍽️",
+              "lat": 35.6745957,
+              "lng": 139.7620134,
+              "region": "Tokyo",
+              "type": "restaurant",
+              "area": "有楽町",
+              "hours": "11:00-21:00",
+              "notes": "送貨/popup shop (要睇X/IG) | 水準非常高，可能收不到本站通知",
+              "ai_notes": "",
+              "address": "",
+              "links": ["https://yokomizoyuri.com/shops/norionigiriya"],
+              "created": "2026-06-21T15:30:18.673Z",
+              "modified": "2026-06-21T15:30:18.673Z"
+            }
+          ]
+        }
+      ],
+      "_meta": {
+        "version": "1.0",
+        "created": "2026-06-21T15:30:18.673Z",
+        "modified": "2026-06-21T15:30:18.673Z",
+        "lastSaved": "2026-06-21T15:30:18.673Z",
+        "planName": "2026年11月東京旅行"
+      }
+    },
+    {
+      "$comment": "Example: Original Travel Plan Format (Format 2 - Legacy)",
+      "name": "2026年11月東京旅行",
+      "description": "Tokyo travel plan from 2026-10-31 to 2026-11-08",
+      "places": [
+        {
+          "name": "有樂町 飯團 よこみぞゆり (no store, delivery)",
+          "lat": 35.6745957,
+          "lng": 139.7620134
+        }
+      ],
+      "groups": [
+        {
+          "name": "10/31 (六) - 有樂町 → 川越",
+          "places": [
+            {
+              "name": "有樂町 飯團 よこみぞゆり (no store, delivery)",
+              "lat": 35.6745957,
+              "lng": 139.7620134
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "created": "2026-06-21",
+        "source": "travel plan spreadsheet",
+        "version": "1.0"
+      }
+    }
+  ]
+}
