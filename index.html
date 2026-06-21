@@ -467,7 +467,7 @@
                                 </div>
                                 <div class="region">{{ getRegionName(place.region) }} · {{ place.area || '' }}</div>
                             </div>
-                            <div v-if="dragState.overGroup === gi && dragState.draggingPlace !== null" class="place-placeholder" :class="{ 'drag-over': dragState.overGroup === gi }"></div>
+                            <div v-if="dragState.overGroup === gi && dragState.draggingPlace !== null && dragState.overPlaceIndex === null" class="place-placeholder" :class="{ 'drag-over': dragState.overGroup === gi }" @dragover.prevent="onDragOverGroupEnd(gi, $event)" @drop="onDropOnPlace(gi, group.places.length, $event)"></div>
                             <button class="add-place-btn" @click="addPlace(gi)">+ 新增地點</button>
                         </div>
                     </div>
@@ -1408,11 +1408,13 @@ function importPlan(data) {
                 e.dataTransfer.setData('text/plain', '')
             }
             const onDragOverPlace = (gi, pi, e) => {
-                // Only highlight the target place
                 dragState.overGroup = gi
                 dragState.overPlaceIndex = pi
-                // Reset other places' highlight by clearing overGroup for non-targets
-                // This is handled by the template's class binding
+            }
+            const onDragOverGroupEnd = (gi, e) => {
+                // Dragging over the placeholder at end of group
+                dragState.overGroup = gi
+                dragState.overPlaceIndex = null
             }
             const onDropOnPlace = (gi, pi, e) => {
                 e.preventDefault()
