@@ -506,15 +506,9 @@
                             <input v-model="selectedPlace.place.name" placeholder="地點名稱" />
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label>經度 (lng)</label>
-                            <input type="number" step="any" v-model="selectedPlace.place.lng" placeholder="139.7454" />
-                        </div>
-                        <div class="form-field">
-                            <label>緯度 (lat)</label>
-                            <input type="number" step="any" v-model="selectedPlace.place.lat" placeholder="35.6586" />
-                        </div>
+                    <div class="form-field">
+                        <label>座標 (lat, lng)</label>
+                        <input type="text" v-model="coordsInput" placeholder="35.6586, 139.7454" />
                     </div>
                     <div class="form-field" style="text-align: center;">
                         <button @click="enableMapPick" :style="mapPickMode ? {background:'#e74c3c',color:'white'} : {background:'#667eea',color:'white'}" style="padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;">
@@ -830,6 +824,24 @@
         setup() {
             const groups = ref(JSON.parse(JSON.stringify(DEFAULT_DATA.groups)))
             const selectedPlace = ref(null)
+            const coordsInput = ref('')
+            watch(selectedPlace, (val) => {
+                if (val) {
+                    coordsInput.value = `${val.place.lat}, ${val.place.lng}`
+                } else {
+                    coordsInput.value = ''
+                }
+            }, { immediate: false })
+            watch(coordsInput, (val) => {
+                if (selectedPlace.value) {
+                    const match = val.match(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/)
+                    if (match) {
+                        const [latStr, lngStr] = val.split(',').map(s => parseFloat(s.trim()))
+                        selectedPlace.value.place.lat = latStr
+                        selectedPlace.value.place.lng = lngStr
+                    }
+                }
+            })
             const filter = reactive({ search: '', region: null, type: null })
             const showEmojiPicker = ref(false)
             const emojiPickerTarget = ref(null)
