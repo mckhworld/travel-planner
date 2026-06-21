@@ -90,6 +90,8 @@
         .legend-dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid white; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         #places-list { flex: 1; overflow-y: auto; padding: 8px; }
         .region-group { margin-bottom: 8px; border: 1px solid #dee2e6; border-radius: 8px; background: white; transition: box-shadow 0.2s; }
+        .region-group.drag-over-above { border-top: 3px solid #667eea; margin-bottom: 8px; }
+        .region-group.drag-over-below { border-bottom: 3px solid #667eea; margin-top: 8px; }
         .region-group.drag-over { box-shadow: 0 0 0 2px #667eea; }
         .region-group h2 { font-size: 13px; margin: 0; padding: 10px 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; transition: background 0.2s; }
         .region-group h2:hover { background: rgba(0,0,0,0.03); }
@@ -100,6 +102,8 @@
         .place-item { padding: 8px 10px; margin: 3px 0; background: white; border-radius: 6px; cursor: pointer; transition: all 0.2s; border-left: 4px solid; position: relative; }
         .place-item:hover { transform: translateX(3px); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
         .place-item.selected { box-shadow: 0 0 0 2px rgba(102,126,234,0.4); background: #f0f4ff; }
+        .place-item.drag-over-above { border-top: 3px solid #667eea; margin-bottom: 8px; }
+        .place-item.drag-over-below { border-bottom: 3px solid #667eea; margin-top: 8px; }
         .place-item.drag-over { border-top: 2px solid #667eea; }
         .place-item .name { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
         .place-item .region { font-size: 10px; color: #666; }
@@ -440,9 +444,13 @@
             <div id="places-list">
                 <template v-for="(group, gi) in filteredGroups" :key="group.id">
                     <div class="region-group"
-                         :class="{ 'drag-over': dragState.overGroup === gi && !dragState.overPlaceIndex }"
-                         @dragover.prevent="onDragOverGroup(gi)"
-                         @drop="onDropOnGroup(gi)">
+                         :class="{
+                             'drag-over': dragState.overGroup === gi && !dragState.overPlaceIndex,
+                             'drag-over-above': dragState.overGroup === gi && !dragState.overPlaceIndex && dragState.dragOverPosition === 'above',
+                             'drag-over-below': dragState.overGroup === gi && !dragState.overPlaceIndex && dragState.dragOverPosition === 'below'
+                         }"
+                         @dragover.prevent="onDragOverGroup(gi, $event)"
+                         @drop="onDropOnGroup(gi, $event)">
                         <h2 :style="{ color: getGroupColor(gi), backgroundColor: getGroupColor(gi) + '15' }"
                             @click="group.collapsed = !group.collapsed">
                             <span class="group-name" @click.stop>{{ group.emoji }} {{ group.name }} ({{ group.places.length }})</span>
@@ -453,12 +461,14 @@
                                  class="place-item"
                                  :class="{
                                      selected: selectedPlace && selectedPlace.groupIndex === gi && selectedPlace.placeIndex === pi,
-                                     'drag-over': dragState.overGroup === gi && dragState.overPlaceIndex === pi
+                                     'drag-over': dragState.overGroup === gi && dragState.overPlaceIndex === pi,
+                                     'drag-over-above': dragState.overGroup === gi && dragState.overPlaceIndex === pi && dragState.dragOverPosition === 'above',
+                                     'drag-over-below': dragState.overGroup === gi && dragState.overPlaceIndex === pi && dragState.dragOverPosition === 'below'
                                  }"
                                  :style="{ borderLeftColor: PLACE_TYPES[place.type]?.color || '#999' }"
                                  draggable="true"
                                  @dragstart="onDragStartPlace(gi, pi, $event)"
-                                 @dragover.prevent="onDragOverPlace(gi, pi)"
+                                 @dragover.prevent="onDragOverPlace(gi, pi, $event)"
                                  @drop="onDropOnPlace(gi, pi, $event)"
                                  @click="selectFilteredPlace(gi, pi)">
                                 <div class="name">{{ place.emoji || '📍' }} {{ place.name || '未命名' }}
@@ -855,7 +865,7 @@
             const emojiPickerTarget = ref(null)
             const showAddGroupForm = ref(false)
             const newGroupForm = reactive({ name: '', emoji: '📌' })
-            const dragState = reactive({ draggingPlace: null, draggingGroup: null, overGroup: null, overPlaceIndex: null })
+            const dragState = reactive({ draggingPlace: null, draggingGroup: null, overGroup: null, overPlaceIndex: null, dragOverPosition: null })
             
             // Mobile state
             const isMobile = ref(false)
@@ -1405,9 +1415,13 @@ function importPlan(data) {
                 e.dataTransfer.effectAllowed = 'move'
                 e.dataTransfer.setData('text/plain', '')
             }
-            const onDragOverPlace = (gi, pi) => {
+            const onDragOverPlace = (gi, pi, e) => {
                 dragState.overGroup = gi
                 dragState.overPlaceIndex = pi
+                // Determine if dragging above or below the target place
+                const rect = e.currentTarget.getBoundingClientRect()
+                const offset = e.clientY - rect.top
+                dragState.dragOverPosition = offset < rect.height / 2 ? 'above' : 'below'
             }
             const onDropOnPlace = (gi, pi, e) => {
                 e.preventDefault()
@@ -1434,9 +1448,13 @@ function importPlan(data) {
                 e.dataTransfer.effectAllowed = 'move'
                 e.dataTransfer.setData('text/plain', '')
             }
-            const onDragOverGroup = (gi) => {
+            const onDragOverGroup = (gi, e) => {
                 dragState.overGroup = gi
                 dragState.overPlaceIndex = null
+                // Determine if dragging above or below the group header
+                const rect = e.currentTarget.getBoundingClientRect()
+                const offset = e.clientY - rect.top
+                dragState.dragOverPosition = offset < rect.height / 2 ? 'above' : 'below'
             }
             const onDropOnGroup = (gi, e) => {
                 e.preventDefault()
@@ -1459,6 +1477,7 @@ function importPlan(data) {
                 dragState.draggingPlace = null
                 dragState.overGroup = null
                 dragState.overPlaceIndex = null
+                dragState.dragOverPosition = null
             }
 
             // ===== MAP =====
