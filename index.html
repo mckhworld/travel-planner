@@ -1269,11 +1269,17 @@ function importPlan(data) {
                 if (isMobile.value) {
                     mobileSidebarOpen.value = false
                 }
+                // Find the correct marker index for this group and place
+                let markerIndex = 0
+                for (let i = 0; i < gi; i++) {
+                    markerIndex += groups.value[i].places.length
+                }
+                markerIndex += pi
                 // Fly to marker (keep current zoom, no animation)
-                if (markers[pi]) {
-                    map.setView([groups.value[gi].places[pi].lat, groups.value[gi].places[pi].lng], map.getZoom(), { animate: false })
+                if (markers[markerIndex]) {
+                    map.setView([place.lat, place.lng], map.getZoom(), { animate: false })
                     // Delay openPopup to ensure Leaflet popup DOM is ready
-                    setTimeout(() => { if (markers[pi]) markers[pi].openPopup() }, 50)
+                    setTimeout(() => { if (markers[markerIndex]) markers[markerIndex].openPopup() }, 50)
                 }
             }
             const closeDropdowns = () => {
