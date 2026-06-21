@@ -492,18 +492,18 @@
         <div id="detail-panel" :class="{ expanded: selectedPlace, 'mobile-hidden': isMobile && mobileSidebarOpen }">
             <div class="detail-content" v-if="selectedPlace" @scroll.stop>
                     <div class="detail-header">
-                        <div class="detail-title">{{ selectedPlace.place.emoji || '📍' }} {{ selectedPlace.place.name || '未命名' }}</div>
+                        <div class="detail-title">{{ currentPlace.emoji || '📍' }} {{ currentPlace.name || '未命名' }}</div>
                         <button class="detail-close" @click="closeDetail">✕</button>
                     </div>
                     <div class="form-row">
                         <div class="form-field emoji-field">
                             <label>圖示</label>
-                            <input :value="selectedPlace.place.emoji || '📍'" @input="selectedPlace.place.emoji = $event.target.value" placeholder="📍" />
+                            <input :value="currentPlace.emoji || '📍'" @input="currentPlace.emoji = $event.target.value" placeholder="📍" />
                             <button @click="openEmojiPicker({ type: 'place', groupIndex: selectedPlace.groupIndex, placeIndex: selectedPlace.placeIndex })">🎨</button>
                         </div>
                         <div class="form-field">
                             <label>名稱</label>
-                            <input v-model="selectedPlace.place.name" placeholder="地點名稱" />
+                            <input v-model="currentPlace.name" placeholder="地點名稱" />
                         </div>
                     </div>
                     <div class="form-field">
@@ -520,9 +520,9 @@
                         <div class="form-field">
                             <label>地區</label>
                             <div class="smart-input">
-                                <input v-model="selectedPlace.place.region" :placeholder="existingRegions.length ? '選取或輸入新地區' : '輸入地區'" @focus="selectedPlace._showRegionDropdown = true" @blur="setTimeout(() => { selectedPlace._showRegionDropdown = false }, 200)" />
-                                <div v-if="selectedPlace._showRegionDropdown" class="smart-dropdown">
-                                    <div v-for="r in existingRegions" :key="r" @click="selectedPlace.place.region = r; selectedPlace._showRegionDropdown = false">
+                                <input v-model="currentPlace.region" :placeholder="existingRegions.length ? '選取或輸入新地區' : '輸入地區'" @focus="currentPlace._showRegionDropdown = true" @blur="setTimeout(() => { currentPlace._showRegionDropdown = false }, 200)" />
+                                <div v-if="currentPlace._showRegionDropdown" class="smart-dropdown">
+                                    <div v-for="r in existingRegions" :key="r" @click="currentPlace.region = r; currentPlace._showRegionDropdown = false">
                                         {{ r }}
                                     </div>
                                 </div>
@@ -531,9 +531,9 @@
                         <div class="form-field">
                             <label>類型</label>
                             <div class="smart-input">
-                                <input :value="selectedPlace.place.type" @input="updateFieldType($event)" :placeholder="existingTypes.length ? '選取或輸入新類型' : '輸入類型'" @focus="selectedPlace._showTypeDropdown = true" @blur="setTimeout(() => { selectedPlace._showTypeDropdown = false }, 200)" />
-                                <div v-if="selectedPlace._showTypeDropdown" class="smart-dropdown">
-                                    <div v-for="t in existingTypes" :key="t" @click="selectedPlace.place.type = t; selectedPlace._showTypeDropdown = false">
+                                <input :value="currentPlace.type" @input="updateFieldType($event)" :placeholder="existingTypes.length ? '選取或輸入新類型' : '輸入類型'" @focus="currentPlace._showTypeDropdown = true" @blur="setTimeout(() => { currentPlace._showTypeDropdown = false }, 200)" />
+                                <div v-if="currentPlace._showTypeDropdown" class="smart-dropdown">
+                                    <div v-for="t in existingTypes" :key="t" @click="currentPlace.type = t; currentPlace._showTypeDropdown = false">
                                         {{ PLACE_TYPES[t]?.name || t }}
                                     </div>
                                 </div>
@@ -543,9 +543,9 @@
                     <div class="form-field">
                         <label>區域</label>
                         <div class="smart-input">
-                            <input v-model="selectedPlace.place.area" :placeholder="existingAreas.length ? '選取或輸入新區域' : '輸入區域'" @focus="selectedPlace._showAreaDropdown = true" @blur="setTimeout(() => { selectedPlace._showAreaDropdown = false }, 200)" />
-                            <div v-if="selectedPlace._showAreaDropdown" class="smart-dropdown">
-                                <div v-for="a in existingAreas" :key="a" @click="selectedPlace.place.area = a; selectedPlace._showAreaDropdown = false">
+                            <input v-model="currentPlace.area" :placeholder="existingAreas.length ? '選取或輸入新區域' : '輸入區域'" @focus="currentPlace._showAreaDropdown = true" @blur="setTimeout(() => { currentPlace._showAreaDropdown = false }, 200)" />
+                            <div v-if="currentPlace._showAreaDropdown" class="smart-dropdown">
+                                <div v-for="a in existingAreas" :key="a" @click="currentPlace.area = a; currentPlace._showAreaDropdown = false">
                                     {{ a }}
                                 </div>
                             </div>
@@ -553,31 +553,31 @@
                     </div>
                     <div class="form-field">
                         <label>營業時間</label>
-                        <input v-model="selectedPlace.place.hours" placeholder="例如: 10:00-18:00" />
+                        <input v-model="currentPlace.hours" placeholder="例如: 10:00-18:00" />
                     </div>
                     <div class="form-field">
                         <label>備註</label>
-                        <textarea v-model="selectedPlace.place.notes" rows="2" placeholder="個人備註"></textarea>
+                        <textarea v-model="currentPlace.notes" rows="2" placeholder="個人備註"></textarea>
                     </div>
                     <div class="form-field">
                         <label>AI 研究筆記</label>
-                        <textarea v-model="selectedPlace.place.ai_notes" rows="2" placeholder="AI 研究結果"></textarea>
+                        <textarea v-model="currentPlace.ai_notes" rows="2" placeholder="AI 研究結果"></textarea>
                     </div>
                     <div class="form-field">
                         <label>地址</label>
-                        <textarea v-model="selectedPlace.place.address" rows="2" placeholder="完整地址"></textarea>
+                        <textarea v-model="currentPlace.address" rows="2" placeholder="完整地址"></textarea>
                     </div>
                     <div class="form-field">
                         <label>連結</label>
-                        <div v-for="(link, i) in selectedPlace.place.links" :key="i" class="link-row">
-                            <input v-model="selectedPlace.place.links[i]" placeholder="https://..." />
-                            <button @click="selectedPlace.place.links.splice(i, 1)" v-if="selectedPlace.place.links.length > 1">✕</button>
+                        <div v-for="(link, i) in currentPlace.links" :key="i" class="link-row">
+                            <input v-model="currentPlace.links[i]" placeholder="https://..." />
+                            <button @click="currentPlace.links.splice(i, 1)" v-if="currentPlace.links.length > 1">✕</button>
                         </div>
-                        <button class="add-link-btn" @click="selectedPlace.place.links.push('')">+ 新增連結</button>
+                        <button class="add-link-btn" @click="currentPlace.links.push('')">+ 新增連結</button>
                     </div>
                     <div class="form-actions">
                         <span class="save-status">💾 已自動儲存</span>
-                        <a :href="buildMapsLink(selectedPlace.place)" target="_blank" class="detail-link">📍 Google Maps 搜尋</a>
+                        <a :href="buildMapsLink(currentPlace)" target="_blank" class="detail-link">📍 Google Maps 搜尋</a>
                         <button class="delete-place-btn" @click="deletePlace(selectedPlace.groupIndex, selectedPlace.placeIndex)">🗑️ 刪除地點</button>
                     </div>
                 </div>
@@ -824,19 +824,28 @@
         setup() {
             const groups = ref(JSON.parse(JSON.stringify(DEFAULT_DATA.groups)))
             const selectedPlace = ref(null)
+            const currentPlace = computed(() => {
+                const sp = selectedPlace.value
+                if (sp && sp.groupIndex != null && sp.placeIndex != null) {
+                    return groups.value[sp.groupIndex]?.places[sp.placeIndex] || null
+                }
+                return null
+            })
             const coordsInput = computed({
                 get: () => {
-                    if (selectedPlace.value) {
-                        return `${selectedPlace.value.place.lat}, ${selectedPlace.value.place.lng}`
-                    }
+                    const p = currentPlace.value
+                    if (p) return `${p.lat}, ${p.lng}`
                     return ''
                 },
                 set: (val) => {
-                    const match = val.match(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/)
-                    if (match && selectedPlace.value) {
-                        const [latStr, lngStr] = val.split(',').map(s => parseFloat(s.trim()))
-                        selectedPlace.value.place.lat = latStr
-                        selectedPlace.value.place.lng = lngStr
+                    const p = currentPlace.value
+                    if (p) {
+                        const match = val.match(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/)
+                        if (match) {
+                            const [latStr, lngStr] = val.split(',').map(s => parseFloat(s.trim()))
+                            p.lat = latStr
+                            p.lng = lngStr
+                        }
                     }
                 }
             })
@@ -1153,7 +1162,7 @@ function importPlan(data) {
 
             // ===== CRUD ====
             const selectPlace = (gi, pi) => {
-                selectedPlace.value = { groupIndex: gi, placeIndex: pi, place: groups.value[gi].places[pi] }
+                selectedPlace.value = { groupIndex: gi, placeIndex: pi }
                 groups.value[gi].places[pi]._showRegionDropdown = false
                 groups.value[gi].places[pi]._showAreaDropdown = false
                 // Close mobile sidebar when selecting a place
@@ -1333,8 +1342,9 @@ function importPlan(data) {
             }
 
             const updateFieldType = (event) => {
-                if (!selectedPlace.value) return
-                selectedPlace.value.place.type = event.target.value
+                const p = currentPlace.value
+                if (!p) return
+                p.type = event.target.value
             }
 
             // ===== EMOJI PICKER =====
@@ -1441,9 +1451,9 @@ function importPlan(data) {
                 setTimeout(() => { map.invalidateSize(); fixTileContainer() }, 500)
                 setTimeout(() => { map.invalidateSize(); fixTileContainer() }, 1000)
                 map.on('click', (e) => {
-                    if (mapPickMode.value && selectedPlace.value) {
-                        selectedPlace.value.place.lat = e.latlng.lat
-                        selectedPlace.value.place.lng = e.latlng.lng
+                    if (mapPickMode.value && currentPlace.value) {
+                        currentPlace.value.lat = e.latlng.lat
+                        currentPlace.value.lng = e.latlng.lng
                         updateMarkers()
                         // Place marker at picked location
                         if (pickMarker) map.removeLayer(pickMarker)
