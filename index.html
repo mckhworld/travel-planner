@@ -824,18 +824,16 @@
         setup() {
             const groups = ref(JSON.parse(JSON.stringify(DEFAULT_DATA.groups)))
             const selectedPlace = ref(null)
-            const coordsInput = ref('')
-            watch(selectedPlace, (val) => {
-                if (val) {
-                    coordsInput.value = `${val.place.lat}, ${val.place.lng}`
-                } else {
-                    coordsInput.value = ''
-                }
-            }, { immediate: false })
-            watch(coordsInput, (val) => {
-                if (selectedPlace.value) {
+            const coordsInput = computed({
+                get: () => {
+                    if (selectedPlace.value) {
+                        return `${selectedPlace.value.place.lat}, ${selectedPlace.value.place.lng}`
+                    }
+                    return ''
+                },
+                set: (val) => {
                     const match = val.match(/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/)
-                    if (match) {
+                    if (match && selectedPlace.value) {
                         const [latStr, lngStr] = val.split(',').map(s => parseFloat(s.trim()))
                         selectedPlace.value.place.lat = latStr
                         selectedPlace.value.place.lng = lngStr
