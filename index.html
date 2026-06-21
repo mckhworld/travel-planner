@@ -1449,6 +1449,8 @@ function importPlan(data) {
                 e.dataTransfer.setData('text/plain', '')
             }
             const onDragOverGroup = (gi, e) => {
+                // Only show group drag-over when dragging a group
+                if (dragState.draggingGroup === null) return
                 dragState.overGroup = gi
                 dragState.overPlaceIndex = null
                 // Determine if dragging above or below the group header
