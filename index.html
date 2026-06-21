@@ -925,6 +925,9 @@
             })
             const existingTypes = computed(() => {
                 const s = new Set()
+                // Add all predefined types from PLACE_TYPES
+                Object.keys(PLACE_TYPES).forEach(t => s.add(t))
+                // Also add any custom types used by places
                 groups.value.forEach(g => g.places.forEach(p => { if (p.type) s.add(p.type) }))
                 return [...s].sort()
             })
