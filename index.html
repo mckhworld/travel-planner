@@ -519,10 +519,10 @@
                     <div class="form-row">
                         <div class="form-field">
                             <label>地區</label>
-                            <div class="smart-input" @click="currentPlace._showRegionDropdown = false">
-                                <input v-model="currentPlace.region" :placeholder="existingRegions.length ? '選取或輸入新地區' : '輸入地區'" @focus="currentPlace._showRegionDropdown = true" @blur="currentPlace._showRegionDropdown = false" @click.stop />
+                            <div class="smart-input" @click="currentPlace.value._showRegionDropdown = false">
+                                <input v-model="currentPlace.region" :placeholder="existingRegions.length ? '選取或輸入新地區' : '輸入地區'" @focus="currentPlace.value._showRegionDropdown = true" @blur="currentPlace.value._showRegionDropdown = false" @click.stop />
                                 <div v-if="currentPlace._showRegionDropdown" class="smart-dropdown">
-                                    <div v-for="r in existingRegions" :key="r" @click.stop="currentPlace.region = r; currentPlace._showRegionDropdown = false">
+                                    <div v-for="r in existingRegions" :key="r" @click.stop="currentPlace.value.region = r; currentPlace._showRegionDropdown = false">
                                         {{ r }}
                                     </div>
                                 </div>
@@ -530,10 +530,10 @@
                         </div>
                         <div class="form-field">
                             <label>類型</label>
-                            <div class="smart-input" @click="currentPlace._showTypeDropdown = false">
-                                <input :value="currentPlace.type" @input="updateFieldType($event)" :placeholder="existingTypes.length ? '選取或輸入新類型' : '輸入類型'" @focus="currentPlace._showTypeDropdown = true" @blur="currentPlace._showTypeDropdown = false" @click.stop />
+                            <div class="smart-input" @click="currentPlace.value._showTypeDropdown = false">
+                                <input :value="currentPlace.type" @input="updateFieldType($event)" :placeholder="existingTypes.length ? '選取或輸入新類型' : '輸入類型'" @focus="currentPlace.value._showTypeDropdown = true" @blur="currentPlace.value._showTypeDropdown = false" @click.stop />
                                 <div v-if="currentPlace._showTypeDropdown" class="smart-dropdown">
-                                    <div v-for="t in existingTypes" :key="t" @click.stop="currentPlace.type = t; currentPlace._showTypeDropdown = false">
+                                    <div v-for="t in existingTypes" :key="t" @click.stop="currentPlace.value.type = t; currentPlace._showTypeDropdown = false">
                                         {{ PLACE_TYPES[t]?.name || t }}
                                     </div>
                                 </div>
@@ -542,10 +542,10 @@
                     </div>
                     <div class="form-field">
                         <label>區域</label>
-                        <div class="smart-input" @click="currentPlace._showAreaDropdown = false">
-                            <input v-model="currentPlace.area" :placeholder="existingAreas.length ? '選取或輸入新區域' : '輸入區域'" @focus="currentPlace._showAreaDropdown = true" @blur="currentPlace._showAreaDropdown = false" @click.stop />
+                        <div class="smart-input" @click="currentPlace.value._showAreaDropdown = false">
+                            <input v-model="currentPlace.area" :placeholder="existingAreas.length ? '選取或輸入新區域' : '輸入區域'" @focus="currentPlace.value._showAreaDropdown = true" @blur="currentPlace.value._showAreaDropdown = false" @click.stop />
                             <div v-if="currentPlace._showAreaDropdown" class="smart-dropdown">
-                                <div v-for="a in existingAreas" :key="a" @click.stop="currentPlace.area = a; currentPlace._showAreaDropdown = false">
+                                <div v-for="a in existingAreas" :key="a" @click.stop="currentPlace.value.area = a; currentPlace._showAreaDropdown = false">
                                     {{ a }}
                                 </div>
                             </div>
