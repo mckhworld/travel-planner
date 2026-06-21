@@ -522,7 +522,7 @@
                             <div class="smart-input">
                                 <input v-model="currentPlace.region" :placeholder="existingRegions.length ? '選取或輸入新地區' : '輸入地區'" @focus="currentPlace.id && (dropdownVisibility[currentPlace.id + '_region'] = true)" @blur="currentPlace.id && (dropdownVisibility[currentPlace.id + '_region'] = false)" @click.stop />
                                 <div v-if="currentPlace.id && dropdownVisibility[currentPlace.id + '_region']" class="smart-dropdown">
-                                    <div v-for="r in existingRegions" :key="r" @click="currentPlace.region = r; dropdownVisibility[currentPlace.id + '_region'] = false">
+                                    <div v-for="r in existingRegions" :key="r" @mousedown="selectRegion(r)">
                                         {{ r }}
                                     </div>
                                 </div>
@@ -533,7 +533,7 @@
                             <div class="smart-input">
                                 <input :value="currentPlace.type" @input="updateFieldType($event)" :placeholder="existingTypes.length ? '選取或輸入新類型' : '輸入類型'" @focus="currentPlace.id && (dropdownVisibility[currentPlace.id + '_type'] = true)" @blur="currentPlace.id && (dropdownVisibility[currentPlace.id + '_type'] = false)" @click.stop />
                                 <div v-if="currentPlace.id && dropdownVisibility[currentPlace.id + '_type']" class="smart-dropdown">
-                                    <div v-for="t in existingTypes" :key="t" @click="currentPlace.type = t; dropdownVisibility[currentPlace.id + '_type'] = false">
+                                    <div v-for="t in existingTypes" :key="t" @mousedown="selectType(t)">
                                         {{ PLACE_TYPES[t]?.name || t }}
                                     </div>
                                 </div>
@@ -545,7 +545,7 @@
                         <div class="smart-input">
                             <input v-model="currentPlace.area" :placeholder="existingAreas.length ? '選取或輸入新區域' : '輸入區域'" @focus="currentPlace.id && (dropdownVisibility[currentPlace.id + '_area'] = true)" @blur="currentPlace.id && (dropdownVisibility[currentPlace.id + '_area'] = false)" @click.stop />
                             <div v-if="currentPlace.id && dropdownVisibility[currentPlace.id + '_area']" class="smart-dropdown">
-                                <div v-for="a in existingAreas" :key="a" @click="currentPlace.area = a; dropdownVisibility[currentPlace.id + '_area'] = false">
+                                <div v-for="a in existingAreas" :key="a" @mousedown="selectArea(a)">
                                     {{ a }}
                                 </div>
                             </div>
@@ -1183,6 +1183,33 @@ function importPlan(data) {
                 dropdownVisibility['type'] = false
                 dropdownVisibility['area'] = false
             }
+            const selectRegion = (value) => {
+                if (!selectedPlace.value) return
+                const { groupIndex, placeIndex } = selectedPlace.value
+                if (groups.value[groupIndex] && groups.value[groupIndex].places[placeIndex]) {
+                    groups.value[groupIndex].places[placeIndex].region = value
+                }
+                const placeId = groups.value[groupIndex].places[placeIndex].id
+                dropdownVisibility[placeId + '_region'] = false
+            }
+            const selectType = (value) => {
+                if (!selectedPlace.value) return
+                const { groupIndex, placeIndex } = selectedPlace.value
+                if (groups.value[groupIndex] && groups.value[groupIndex].places[placeIndex]) {
+                    groups.value[groupIndex].places[placeIndex].type = value
+                }
+                const placeId = groups.value[groupIndex]?.places[placeIndex]?.id
+                dropdownVisibility[placeId + '_type'] = false
+            }
+            const selectArea = (value) => {
+                if (!selectedPlace.value) return
+                const { groupIndex, placeIndex } = selectedPlace.value
+                if (groups.value[groupIndex] && groups.value[groupIndex].places[placeIndex]) {
+                    groups.value[groupIndex].places[placeIndex].area = value
+                }
+                const placeId = groups.value[groupIndex].places[placeIndex].id
+                dropdownVisibility[placeId + '_area'] = false
+            }
             const closeDetail = () => {
                 selectedPlace.value = null
                 mapPickMode.value = false
@@ -1611,7 +1638,7 @@ function importPlan(data) {
                 dropdownVisibility,
                 saveToLocalStorage, loadFromLocalStorage,
                 downloadJSON, handleFileUpload, downloadPlanData,
-                selectPlace, closeDetail, closeDropdowns, enableMapPick,
+                selectPlace, closeDetail, closeDropdowns, selectRegion, selectType, selectArea, enableMapPick,
                 filteredGroups, selectFilteredPlace, deleteFilteredPlace,
                 mapPickMode,
                 addPlace, deletePlace, addGroup, deleteGroup, clearFilter,
