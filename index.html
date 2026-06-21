@@ -920,7 +920,7 @@
             checkMobile()
 
             let map = null
-            let markers = []
+            let markers = {}
             let mapPickMode = ref(false)
             let pickMarker = null
 
@@ -1243,12 +1243,36 @@ function importPlan(data) {
 
             // ===== FILTERED INDEX WRAPPERS =====
             const selectFilteredPlace = (filteredGi, filteredPi) => {
-                const realGi = findRealGroupIdx(filteredGi)
-                if (filteredGroups.value[filteredGi]?.places?.[filteredPi]) {
-                    const placeId = filteredGroups.value[filteredGi].places[filteredPi].id
-                    const realPi = groups.value[realGi].places.findIndex(p => p.id === placeId)
-                    selectPlace(realGi, realPi)
+                if (!filteredGroups.value[filteredGi]?.places?.[filteredPi]) return
+                
+                const filteredPlace = filteredGroups.value[filteredGi].places[filteredPi]
+                
+                // Use place ID to find the marker directly
+                const marker = markers[filteredPlace.id]
+                if (!marker) return
+                
+                // Find real group index for updating selectedPlace
+                let realGi = 0
+                for (let i = 0; i < groups.value.length; i++) {
+                    const groupPlaces = groups.value[i].places
+                    for (let j = 0; j < groupPlaces.length; j++) {
+                        if (groupPlaces[j].id === filteredPlace.id) {
+                            realGi = i
+                            break
+                        }
+                    }
                 }
+                
+                // Find place index within the group
+                let realPi = 0
+                for (let i = 0; i < groups.value[realGi].places.length; i++) {
+                    if (groups.value[realGi].places[i].id === filteredPlace.id) {
+                        realPi = i
+                        break
+                    }
+                }
+                
+                selectPlace(realGi, realPi)
             }
             const deleteFilteredPlace = (filteredGi, filteredPi) => {
                 const realGi = findRealGroupIdx(filteredGi)
@@ -1269,17 +1293,12 @@ function importPlan(data) {
                 if (isMobile.value) {
                     mobileSidebarOpen.value = false
                 }
-                // Find the correct marker index for this group and place
-                let markerIndex = 0
-                for (let i = 0; i < gi; i++) {
-                    markerIndex += groups.value[i].places.length
-                }
-                markerIndex += pi
-                // Fly to marker (keep current zoom, no animation)
-                if (markers[markerIndex]) {
+                // Use place ID to find the marker directly
+                const marker = markers[place.id]
+                if (marker) {
                     map.setView([place.lat, place.lng], map.getZoom(), { animate: false })
                     // Delay openPopup to ensure Leaflet popup DOM is ready
-                    setTimeout(() => { if (markers[markerIndex]) markers[markerIndex].openPopup() }, 50)
+                    setTimeout(() => { if (markers[place.id]) markers[place.id].openPopup() }, 50)
                 }
             }
             const closeDropdowns = () => {
@@ -1721,10 +1740,9 @@ function importPlan(data) {
                 })
             }
             const updateMarkers = () => {
-                markers.forEach(m => map.removeLayer(m))
-                markers = []
+                Object.values(markers).forEach(m => map.removeLayer(m))
+                markers = {}
                 if (pickMarker) { map.removeLayer(pickMarker); pickMarker = null }
-                let idx = 0
                 groups.value.forEach((group, gi) => {
                     group.places.forEach((place, pi) => {
                         if (!place.lat || !place.lng) return
@@ -1744,12 +1762,12 @@ function importPlan(data) {
                             <a href="${buildMapsLink(place)}" target="_blank" class="popup-link">📍 Google Maps</a>
                         `)
                         marker.on('click', () => selectPlace(gi, pi))
-                        markers.push(marker)
-                        idx++
+                        markers[place.id] = marker
                     })
                 })
-                if (markers.length > 0) {
-                    const group = L.featureGroup(markers)
+                const nonNullMarkers = Object.values(markers)
+                if (nonNullMarkers.length > 0) {
+                    const group = L.featureGroup(nonNullMarkers)
                     map.fitBounds(group.getBounds().pad(0.1))
                 }
             }
