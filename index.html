@@ -462,7 +462,7 @@
                                  @drop="onDropOnPlace(gi, pi, $event)"
                                  @click="selectFilteredPlace(gi, pi)">
                                 <div class="name">{{ place.emoji || '📍' }} {{ place.name || '未命名' }}
-                                    <span class="type-badge" :style="{ backgroundColor: PLACE_TYPES[place.type]?.color }">{{ PLACE_TYPES[place.type]?.name || place.type }}</span>
+                                    <span class="type-badge" :style="{ backgroundColor: PLACE_TYPES[place.type]?.color || '#607D8B' }">{{ PLACE_TYPES[place.type]?.name || place.type }}</span>
                                 </div>
                                 <div class="region">{{ getRegionName(place.region) }} · {{ place.area || '' }}</div>
                             </div>
