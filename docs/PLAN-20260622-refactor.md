@@ -364,4 +364,16 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 
 ---
 
-*Last updated: 2026-06-22 (All steps complete - refactoring finished)*
+## 🛠️ Build System Plan
+
+See [PLAN-20260623-build-system.md](./PLAN-20260623-build-system.md) for the build system implementation plan.
+
+Key components:
+- Vite as build tool (recommended)
+- ES modules for all JavaScript
+- Optimized production builds with minification
+- Source maps for debugging
+
+---
+
+*Last updated: 2026-06-22 (All steps complete - ready for build system)*
