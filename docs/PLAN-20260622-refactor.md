@@ -261,18 +261,18 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 - [x] Update HTML to import defaultData
 - [x] Test: default places appear on map
 
-### Step 4: [ ] Extract storage/localStorage-utils.js
-- [ ] Create assets/storage/localStorage-utils.js
-- [ ] Copy saveToLocalStorage, loadFromLocalStorage
-- [ ] Include migration logic for old format
-- [ ] Update HTML to import storage utils
-- [ ] Test: data persists across reloads
+### Step 4: [x] Extract storage/localStorage-utils.js
+- [x] Create assets/storage/localStorage-utils.js
+- [x] Copy saveToLocalStorage, loadFromLocalStorage
+- [x] Include migration logic for old format
+- [x] Update HTML to import storage utils
+- [x] Test: data persists across reloads
 
-### Step 5: [ ] Extract storage/plan-manager.js
-- [ ] Create assets/storage/plan-manager.js
-- [ ] Copy getAllPlans, createPlan, deletePlan, importPlan, loadPlan
-- [ ] Update HTML to import plan manager
-- [ ] Test: plan creation/deletion works
+### Step 5: [x] Extract storage/plan-manager.js
+- [x] Create assets/storage/plan-manager.js
+- [x] Copy getAllPlans, createPlan, deletePlan, importPlan, loadPlan
+- [x] Update HTML to import plan manager
+- [x] Test: plan creation/deletion works
 
 ### Step 6: [ ] Extract state/reactive-state.js
 - [ ] Create assets/state/reactive-state.js
@@ -364,4 +364,4 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 
 ---
 
-*Last updated: 2026-06-22 (Steps 1-3 complete)*
+*Last updated: 2026-06-22 (Steps 1-5 complete)*
