@@ -249,17 +249,17 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 - [x] assets/plan-ui/
 - [x] assets/utils/
 
-### Step 2: [ ] Extract constants.js
-- [ ] Create assets/constants.js
-- [ ] Copy PLACE_TYPES, REGION_NAMES, REGION_COLOR_PALETTE, COMMON_EMOJIS
-- [ ] Update HTML to import constants
-- [ ] Test: app loads without errors
+### Step 2: [x] Extract constants.js
+- [x] Create assets/constants.js
+- [x] Copy PLACE_TYPES, REGION_NAMES, REGION_COLOR_PALETTE, COMMON_EMOJIS
+- [x] Update HTML to import constants
+- [x] Test: app loads without errors
 
-### Step 3: [ ] Extract default-data.js
-- [ ] Create assets/default-data.js
-- [ ] Copy DEFAULT_DATA structure
-- [ ] Update HTML to import defaultData
-- [ ] Test: default places appear on map
+### Step 3: [x] Extract default-data.js
+- [x] Create assets/default-data.js
+- [x] Copy DEFAULT_DATA structure
+- [x] Update HTML to import defaultData
+- [x] Test: default places appear on map
 
 ### Step 4: [ ] Extract storage/localStorage-utils.js
 - [ ] Create assets/storage/localStorage-utils.js
@@ -364,4 +364,4 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 
 ---
 
-*Last updated: 2026-06-22 (Step 1 complete)*
+*Last updated: 2026-06-22 (Steps 1-3 complete)*
