@@ -82,6 +82,103 @@ const wrappedBuildMapsLink = (place) => buildMapsLink(place)
 const wrappedGetRegionColor = (region) => getRegionColor(region, groups)
 const wrappedGetGroupColor = (gi) => getGroupColor(gi, groups)
 
+// Missing functions from original inline script
+const closeDropdowns = () => {
+    dropdownVisibility['region'] = false
+    dropdownVisibility['type'] = false
+    dropdownVisibility['area'] = false
+}
+
+const selectRegion = (value) => {
+    if (!selectedPlace.value) return
+    const { groupIndex, placeIndex } = selectedPlace.value
+    if (groups.value[groupIndex] && groups.value[groupIndex].places[placeIndex]) {
+        const now = new Date().toISOString()
+        groups.value[groupIndex].places[placeIndex].region = value
+        groups.value[groupIndex].places[placeIndex].modified = now
+    }
+    const placeId = groups.value[groupIndex]?.places[placeIndex]?.id
+    if (placeId) dropdownVisibility[placeId + '_region'] = false
+}
+
+const selectType = (value) => {
+    if (!selectedPlace.value) return
+    const { groupIndex, placeIndex } = selectedPlace.value
+    if (groups.value[groupIndex] && groups.value[groupIndex].places[placeIndex]) {
+        const now = new Date().toISOString()
+        groups.value[groupIndex].places[placeIndex].type = value
+        groups.value[groupIndex].places[placeIndex].modified = now
+    }
+    const placeId = groups.value[groupIndex]?.places[placeIndex]?.id
+    if (placeId) dropdownVisibility[placeId + '_type'] = false
+}
+
+const selectArea = (value) => {
+    if (!selectedPlace.value) return
+    const { groupIndex, placeIndex } = selectedPlace.value
+    if (groups.value[groupIndex] && groups.value[groupIndex].places[placeIndex]) {
+        const now = new Date().toISOString()
+        groups.value[groupIndex].places[placeIndex].area = value
+        groups.value[groupIndex].places[placeIndex].modified = now
+    }
+    const placeId = groups.value[groupIndex]?.places[placeIndex]?.id
+    if (placeId) dropdownVisibility[placeId + '_area'] = false
+}
+
+const selectFilteredPlace = (filteredGi, filteredPi) => {
+    if (!filteredGroups.value[filteredGi]?.places?.[filteredPi]) return
+    
+    const filteredPlace = filteredGroups.value[filteredGi].places[filteredPi]
+    
+    // Find real group index for updating selectedPlace
+    let realGi = 0
+    for (let i = 0; i < groups.value.length; i++) {
+        const groupPlaces = groups.value[i].places
+        for (let j = 0; j < groupPlaces.length; j++) {
+            if (groupPlaces[j].id === filteredPlace.id) {
+                realGi = i
+                break
+            }
+        }
+    }
+    
+    // Find place index within the group
+    let realPi = 0
+    for (let i = 0; i < groups.value[realGi].places.length; i++) {
+        if (groups.value[realGi].places[i].id === filteredPlace.id) {
+            realPi = i
+            break
+        }
+    }
+    
+    selectPlace(realGi, realPi)
+}
+
+const deleteFilteredPlace = (filteredGi, filteredPi) => {
+    if (!filteredGroups.value[filteredGi]?.places?.[filteredPi]) return
+    const placeId = filteredGroups.value[filteredGi].places[filteredPi].id
+    const realPi = groups.value.findIndex(g => g.places.some(p => p.id === placeId))
+    if (realPi >= 0) {
+        const placeIndex = groups.value[realPi].places.findIndex(p => p.id === placeId)
+        if (placeIndex >= 0) deletePlace(realPi, placeIndex)
+    }
+}
+
+const updateFieldType = (event) => {
+    const p = currentPlace.value
+    if (!p) return
+    const now = new Date().toISOString()
+    p.type = event.target.value
+    p.modified = now
+}
+
+const updatePlaceLinks = (place, links) => {
+    if (!place) return
+    const now = new Date().toISOString()
+    place.links = links
+    place.modified = now
+}
+
 // Create Vue app
 const app = createApp({
     setup() {
