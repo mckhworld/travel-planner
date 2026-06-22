@@ -334,34 +334,34 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 - [x] Update HTML to import utils
 - [x] Test: mobile view works
 
-### Step 16: [ ] Create assets/main.js
-- [ ] Create main entry point
-- [ ] Import all modules in correct order
-- [ ] Initialize Vue app and mount
-- [ ] Add lifecycle hooks
+### Step 16: [x] Create assets/main.js
+- [x] Create main entry point
+- [x] Import all modules in correct order
+- [x] Initialize Vue app and mount
+- [x] Add lifecycle hooks
 
-### Step 17: [ ] Update index.html
-- [ ] Remove inline script tag
-- [ ] Add ES module imports
-- [ ] Test: all functionality works
+### Step 17: [x] Update index.html
+- [x] Remove inline script tag
+- [x] Add ES module imports
+- [x] Test: all functionality works
 
-### Step 18: [ ] Final Testing
-- [ ] Test page loads without errors
-- [ ] Test map renders correctly
-- [ ] Test adding/deleting places
-- [ ] Test plan switching
-- [ ] Test emoji picker
-- [ ] Test drag-and-drop reordering
-- [ ] Test mobile view
-
----
-
-## 📌 Commit Policy Reminder
-
-- **Commit each small change** after every file creation/modification
-- **Do not push** - keep changes local only
-- Commit messages should follow: `refactor(js): extract [feature] to separate file`
+### Step 18: [x] Final Testing
+- [x] Test page loads without errors
+- [x] Test map renders correctly
+- [x] Test adding/deleting places
+- [x] Test plan switching
+- [x] Test emoji picker
+- [x] Test drag-and-drop reordering
+- [x] Test mobile view
 
 ---
 
-*Last updated: 2026-06-22 (Steps 1-15 complete)*
+## 📌 Commit Policy Reminder (COMPLETED)
+
+- [x] Commit each small change after every file creation/modification
+- [x] Do not push - keep changes local only
+- Commit messages follow: `refactor(js): extract [feature] to separate file`
+
+---
+
+*Last updated: 2026-06-22 (All steps complete - refactoring finished)*
