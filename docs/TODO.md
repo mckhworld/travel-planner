@@ -45,12 +45,16 @@
 
 ### Build Output:
 - `dist/index.html` - 37.98 kB (7.82 kB gzipped)
-- `dist/assets/index-B2bKpmYj.js` - 229.26 kB (73.39 kB gzipped)
-- Source maps enabled for debugging
+- `dist/assets/index-*.js` - ~230 kB (~74 kB gzipped with source maps)
 
 ### Commands:
 ```bash
-npm run dev    # Start dev server on http://localhost:5173
+npm run dev    # Start dev server on http://localhost:5173 with HMR
 npm run build  # Create optimized production bundle in dist/
-npm run preview # Preview production build locally
+npm run preview # Preview production locally
 ```
+
+## Known Issues
+
+- App requires runtime template compilation which is not supported in CDN Vue builds
+- Future work needed to resolve template compilation issue
