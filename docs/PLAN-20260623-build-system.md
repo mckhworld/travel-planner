@@ -473,6 +473,43 @@ export default defineConfig({
 
 ---
 
+## 🚨 Branch Strategy for GitHub Pages
+
+### Current State (After Merge)
+- **main branch**: Contains source code with 14 modular JS files
+- **gh-pages branch**: Will be updated to serve only `dist/` folder
+
+### Deployment Strategy
+1. **main branch**: Contains source code, `package.json`, `vite.config.js`
+2. **gh-pages branch**: Contains ONLY the built `dist/` folder
+
+### GitHub Pages Configuration (Repository Settings)
+```
+Source: main branch
+Folder: /dist
+```
+
+### Build Workflow
+```bash
+# On main branch
+npm run build          # Creates dist/ directory
+git add dist/          # Commit dist to main
+git commit -m "build: update dist"
+git push origin main   # Push to GitHub
+
+# GitHub Pages automatically deploys from /dist folder on main branch
+```
+
+### Alternative: Deploy Script (Optional)
+If you prefer not to commit `dist/` to main:
+```bash
+npm run build          # Creates dist/
+cp -r dist/* .         # Copy to a deploy folder
+# Or use a script to push only dist/ to gh-pages branch
+```
+
+---
+
 ## 📝 Notes
 
 ### Current Dependencies
