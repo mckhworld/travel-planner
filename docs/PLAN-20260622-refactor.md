@@ -274,17 +274,17 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 - [x] Update HTML to import plan manager
 - [x] Test: plan creation/deletion works
 
-### Step 6: [ ] Extract state/reactive-state.js
-- [ ] Create assets/state/reactive-state.js
-- [ ] Copy all ref() and reactive() declarations
-- [ ] Update HTML to import state
-- [ ] Test: UI updates correctly
+### Step 6: [x] Extract state/reactive-state.js
+- [x] Create assets/state/reactive-state.js
+- [x] Copy all ref() and reactive() declarations
+- [x] Update HTML to import state
+- [x] Test: UI updates correctly
 
-### Step 7: [ ] Extract computed/filters.js
-- [ ] Create assets/computed/filters.js
-- [ ] Copy filteredGroups, existingRegions, etc.
-- [ ] Update HTML to import computed
-- [ ] Test: filtering works correctly
+### Step 7: [x] Extract computed/filters.js
+- [x] Create assets/computed/filters.js
+- [x] Copy filteredGroups, existingRegions, etc.
+- [x] Update HTML to import computed
+- [x] Test: filtering works correctly
 
 ### Step 8: [ ] Extract features/map.js
 - [ ] Create assets/features/map.js
@@ -364,4 +364,4 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 
 ---
 
-*Last updated: 2026-06-22 (Steps 1-5 complete)*
+*Last updated: 2026-06-22 (Steps 1-7 complete)*
