@@ -286,53 +286,53 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 - [x] Update HTML to import computed
 - [x] Test: filtering works correctly
 
-### Step 8: [ ] Extract features/map.js
-- [ ] Create assets/features/map.js
-- [ ] Copy initMap, updateMarkers, map event handlers
-- [ ] Update HTML to import map feature
-- [ ] Test: map renders and markers work
+### Step 8: [x] Extract features/map.js
+- [x] Create assets/features/map.js
+- [x] Copy initMap, updateMarkers, map event handlers
+- [x] Update HTML to import map feature
+- [x] Test: map renders and markers work
 
-### Step 9: [ ] Extract features/emoji-picker.js
-- [ ] Create assets/features/emoji-picker.js
-- [ ] Copy emoji picker handlers
-- [ ] Update HTML to import emoji picker
-- [ ] Test: emoji picker opens and selects
+### Step 9: [x] Extract features/emoji-picker.js
+- [x] Create assets/features/emoji-picker.js
+- [x] Copy emoji picker handlers
+- [x] Update HTML to import emoji picker
+- [x] Test: emoji picker opens and selects
 
-### Step 10: [ ] Extract features/drag-and-drop.js
-- [ ] Create assets/features/drag-and-drop.js
-- [ ] Copy all drag handlers
-- [ ] Update HTML to import drag and drop
-- [ ] Test: reordering works
+### Step 10: [x] Extract features/drag-and-drop.js
+- [x] Create assets/features/drag-and-drop.js
+- [x] Copy all drag handlers
+- [x] Update HTML to import drag and drop
+- [x] Test: reordering works
 
-### Step 11: [ ] Extract features/place-manager.js
-- [ ] Create assets/features/place-manager.js
-- [ ] Copy addPlace, deletePlace, selectPlace, closeDetail
-- [ ] Update HTML to import place manager
-- [ ] Test: place CRUD operations work
+### Step 11: [x] Extract features/place-manager.js
+- [x] Create assets/features/place-manager.js
+- [x] Copy addPlace, deletePlace, selectPlace, closeDetail
+- [x] Update HTML to import place manager
+- [x] Test: place CRUD operations work
 
-### Step 12: [ ] Extract plan-ui/manager.js
-- [ ] Create assets/plan-ui/manager.js
-- [ ] Copy plan selector UI handlers
-- [ ] Update HTML to import plan manager
-- [ ] Test: plan switching works
+### Step 12: [x] Extract plan-ui/manager.js
+- [x] Create assets/plan-ui/manager.js
+- [x] Copy plan selector UI handlers
+- [x] Update HTML to import plan manager
+- [x] Test: plan switching works
 
-### Step 13: [ ] Extract utils/timestamp.js
-- [ ] Create assets/utils/timestamp.js
-- [ ] Copy timestamp helpers
-- [ ] Update HTML to import utils
-- [ ] Test: timestamps update correctly
+### Step 13: [x] Extract utils/timestamp.js
+- [x] Create assets/utils/timestamp.js
+- [x] Copy timestamp helpers
+- [x] Update HTML to import utils
+- [x] Test: timestamps update correctly
 
-### Step 14: [ ] Extract utils/maps-link.js
-- [ ] Create assets/utils/maps-link.js
-- [ ] Copy buildMapsLink
-- [ ] Update HTML to import utils
-- [ ] Test: Google Maps links work
+### Step 14: [x] Extract utils/maps-link.js
+- [x] Create assets/utils/maps-link.js
+- [x] Copy buildMapsLink
+- [x] Update HTML to import utils
+- [x] Test: Google Maps links work
 
-### Step 15: [ ] Extract utils/mobile.js
-- [ ] Create assets/utils/mobile.js
-- [ ] Copy mobile detection helpers
-- [ ] Update HTML to import utils
-- [ ] Test: mobile view works
+### Step 15: [x] Extract utils/mobile.js
+- [x] Create assets/utils/mobile.js
+- [x] Copy mobile detection helpers
+- [x] Update HTML to import utils
+- [x] Test: mobile view works
 
 ### Step 16: [ ] Create assets/main.js
 - [ ] Create main entry point
@@ -364,4 +364,4 @@ constants.js → default-data.js → storage/utils → storage/plan-manager
 
 ---
 
-*Last updated: 2026-06-22 (Steps 1-7 complete)*
+*Last updated: 2026-06-22 (Steps 1-15 complete)*
