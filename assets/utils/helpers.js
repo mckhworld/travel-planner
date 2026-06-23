@@ -5,40 +5,36 @@ export function getRegionColor(region, groups) {
     if (!region) return '#999'
     // Re-implement filterRegions logic
     const s = new Set()
+    if (!groups || !groups.value) return '#999'
     groups.value.forEach(g => g.places.forEach(p => { if (p.region) s.add(p.region) }))
     const filterRegions = [...s].sort()
     
     const idx = filterRegions.indexOf(region)
     if (idx >= 0) return REGION_COLOR_PALETTE[idx % REGION_COLOR_PALETTE.length]
-    const existingColors = new Set(REGION_COLOR_PALETTE.filter(c => groups.value.some(g => getGroupColorByName(g.name, filterRegions) === c)))
+    const existingColors = new Set(REGION_COLOR_PALETTE.filter(c => groups.value.some(g => getGroupColorByName(g.name, null) === c)))
     return REGION_COLOR_PALETTE.find(c => !existingColors.has(c)) || '#999'
 }
 
 // Get group color by index
 export function getGroupColor(gi, groups) {
-    return getGroupColorByName(groups.value[gi].name)
+    if (!groups || !groups.value) return '#999'
+    return getGroupColorByName(groups.value[gi].name, null)
 }
 
 // Get group color by name
 export function getGroupColorByName(name, filterRegionsRef = null) {
-    // Re-implement filterRegions logic
-    const s = new Set()
-    if (filterRegionsRef) {
-        // If filterRegions is passed as ref, use it
-        if (filterRegionsRef.value) {
+    if (!filterRegionsRef || !filterRegionsRef.value) {
+        // Re-implement filterRegions logic
+        const s = new Set()
+        if (filterRegionsRef && filterRegionsRef.value) {
             const idx = filterRegionsRef.value.indexOf(name)
             if (idx >= 0) return REGION_COLOR_PALETTE[idx % REGION_COLOR_PALETTE.length]
         }
-    } else {
-        // Otherwise, compute from groups
-        const s = new Set()
-        if (groups && groups.value) {
-            groups.value.forEach(g => g.places.forEach(p => { if (p.region) s.add(p.region) }))
-            const filterRegions = [...s].sort()
-            const idx = filterRegions.indexOf(name)
-            if (idx >= 0) return REGION_COLOR_PALETTE[idx % REGION_COLOR_PALETTE.length]
-        }
+        // If filterRegions is not provided, return default color
+        return '#999'
     }
+    const idx = filterRegionsRef.value.indexOf(name)
+    if (idx >= 0) return REGION_COLOR_PALETTE[idx % REGION_COLOR_PALETTE.length]
     return '#999'
 }
 

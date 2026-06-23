@@ -34,14 +34,6 @@ import { createDragAndDrop } from './features/drag-and-drop.js'
 import { createPlaceManager } from './features/place-manager.js'
 import { createPlanUIManager } from './plan-ui/manager.js'
 
-// Initialize feature modules with refs
-const { initMap, updateMarkers, setupGroupsWatch } = createMapFeature(
-    ref(null), // mapRef
-    ref({}), // markersRef
-    mapPickMode, // mapPickModeRef
-    ref(null) // pickMarkerRef
-)
-
 const { openEmojiPicker, closeEmojiPicker, selectEmoji } = createEmojiPicker(
     showEmojiPicker, // showEmojiPickerRef
     emojiPickerTarget // emojiPickerTargetRef
@@ -62,6 +54,15 @@ const {
     selectedPlace, // selectedPlaceRef
     dropdownVisibility, // dropdownVisibilityRef
     currentPlace // currentPlaceRef
+)
+
+const { initMap, updateMarkers, setupGroupsWatch } = createMapFeature(
+    ref(null), // mapRef
+    ref({}), // markersRef
+    mapPickMode, // mapPickModeRef
+    ref(null), // pickMarkerRef
+    currentPlace, // currentPlaceRef
+    selectPlace // selectPlaceFn
 )
 
 const { 
@@ -181,6 +182,7 @@ const updatePlaceLinks = (place, links) => {
 
 // Create Vue app
 const app = createApp({
+    template: '<div id="app"></div>',
     setup() {
         // Expose to template
         return {
@@ -219,12 +221,25 @@ const app = createApp({
 document.addEventListener('DOMContentLoaded', () => {
     const mapEl = document.getElementById('map')
     if (mapEl) {
-        app.mount('#app')
+        // Save HTML before mounting
+        const appContent = document.getElementById('app').innerHTML
         
-        // Initialize map
-        initMap()
+        // Mount Vue to a dummy element instead of replacing #app
+        const dummyEl = document.createElement('div')
+        app.mount(dummyEl)
         
-        // Initial marker update
-        setTimeout(() => { updateMarkers() }, 200)
+        // Restore HTML after mounting
+        const restoredApp = document.getElementById('app')
+        if (restoredApp) {
+            // Clear and restore the original HTML
+            restoredApp.innerHTML = appContent
+        }
+        
+        // Initialize map after restoring HTML
+        setTimeout(() => {
+            initMap()
+            // Initial marker update
+            setTimeout(() => { updateMarkers(groups, PLACE_TYPES, getGroupColor, getRegionName, buildMapsLink) }, 200)
+        }, 100)
     }
 })

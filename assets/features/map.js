@@ -1,7 +1,7 @@
 import { watch, nextTick } from 'vue'
 import * as L from 'leaflet'
 
-export function createMapFeature(mapRef, markersRef, mapPickModeRef, pickMarkerRef) {
+export function createMapFeature(mapRef, markersRef, mapPickModeRef, pickMarkerRef, currentPlaceRef, selectPlaceFn) {
     let map = null
     let markers = {}
     
@@ -34,9 +34,9 @@ export function createMapFeature(mapRef, markersRef, mapPickModeRef, pickMarkerR
         setTimeout(() => { map.invalidateSize(); fixTileContainer() }, 1000)
         
         map.on('click', (e) => {
-            if (mapPickModeRef.value && currentPlace.value) {
-                currentPlace.value.lat = e.latlng.lat
-                currentPlace.value.lng = e.latlng.lng
+            if (mapPickModeRef.value && currentPlaceRef.value) {
+                currentPlaceRef.value.lat = e.latlng.lat
+                currentPlaceRef.value.lng = e.latlng.lng
                 updateMarkers()
                 // Place marker at picked location
                 if (pickMarkerRef.value) map.removeLayer(pickMarkerRef.value)
@@ -54,12 +54,13 @@ export function createMapFeature(mapRef, markersRef, mapPickModeRef, pickMarkerR
         })
     }
     
-    const updateMarkers = (groups, PLACE_TYPES, getGroupColor, getRegionName, buildMapsLink) => {
+    const updateMarkers = (groupsRef, PLACE_TYPES, getGroupColor, getRegionName, buildMapsLink) => {
+        const groups = groupsRef
         Object.values(markers).forEach(m => map.removeLayer(m))
         markers = {}
         if (pickMarkerRef.value) { map.removeLayer(pickMarkerRef.value); pickMarkerRef.value = null }
         
-        groups.forEach((group, gi) => {
+        groups.value.forEach((group, gi) => {
             group.places.forEach((place, pi) => {
                 if (!place.lat || !place.lng) return
                 const typeInfo = PLACE_TYPES[place.type] || PLACE_TYPES['other']
@@ -72,12 +73,12 @@ export function createMapFeature(mapRef, markersRef, mapPickModeRef, pickMarkerR
                 }).addTo(map)
                 marker.bindPopup(`
                     <h3>${place.emoji || '📍'} ${place.name} ${!place.lat || !place.lng ? '🚫' : ''}</h3>
-                    <span class="region-badge" style="background-color: ${getGroupColor(gi)}">${getRegionName(place.region)}</span>
+                    <span class="region-badge" style="background-color: ${getGroupColor(gi, groupsRef)}">${getRegionName(place.region)}</span>
                     <span class="type-badge" style="background-color: ${typeInfo.color}">${typeInfo.name}</span>
                     ${place.hours ? `<p style="margin-top: 6px; font-size: 12px;">🕐 ${place.hours}</p>` : ''}
                     <a href="${buildMapsLink(place)}" target="_blank" class="popup-link">📍 Google Maps</a>
                 `)
-                marker.on('click', () => selectPlace(gi, pi))
+                marker.on('click', () => selectPlaceFn(gi, pi))
                 markers[place.id] = marker
             })
         })
