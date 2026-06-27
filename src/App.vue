@@ -39,13 +39,14 @@
                         </h2>
                         <div class="region-content" v-show="!group.collapsed">
                             <div v-for="(place, pi) in group.places" :key="place.id"
-                                 class="place-item"
-                                 :class="{
-                                     selected: selectedPlace && selectedPlace.groupIndex === gi && selectedPlace.placeIndex === pi,
-                                     'drag-over': dragState.overGroup === gi && dragState.overPlaceIndex === pi
-                                 }"
-                                 :style="{ borderLeftColor: PLACE_TYPES[place.type]?.color || '#999' }"
-                                 draggable="true"
+                                  class="place-item"
+                                  :data-place-id="place.id"
+                                  :class="{
+                                      selected: selectedPlace && selectedPlace.groupIndex === gi && selectedPlace.placeIndex === pi,
+                                      'drag-over': dragState.overGroup === gi && dragState.overPlaceIndex === pi
+                                  }"
+                                  :style="{ borderLeftColor: PLACE_TYPES[place.type]?.color || '#999' }"
+                                  draggable="true"
                                  @dragstart="onDragStartPlace(gi, pi, $event)"
                                  @dragover.prevent="onDragOverPlace(gi, pi, $event)"
                                  @drop="onDropOnPlace(gi, pi, $event)"
@@ -408,6 +409,10 @@ const selectPlace = (gi, pi, centerMap = true) => {
     dropdownVisibility[place.id + '_region'] = false
     dropdownVisibility[place.id + '_area'] = false
     if (isMobile.value) mobileSidebarOpen.value = false
+    nextTick(() => {
+        const el = document.querySelector(`.place-item[data-place-id="${place.id}"]`)
+        if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    })
     const marker = markers[place.id]
     if (marker) {
         if (centerMap) {
