@@ -231,11 +231,11 @@
                 <div v-for="(group, gi) in groups" :key="group.id"
                      class="group-editor-item"
                      :class="{ 'drag-over': groupEditorDragState.overIndex === gi }"
-                     draggable="true"
-                     @dragstart="onDragStartGroupEdit(gi, $event)"
                      @dragover.prevent="onDragOverGroupEdit(gi, $event)"
                      @drop="onDropGroupEdit(gi, $event)">
-                    <div class="group-editor-drag-handle">☰</div>
+                    <div class="group-editor-drag-handle"
+                         :draggable="editingGroupId !== group.id"
+                         @dragstart="onDragStartGroupEdit(gi, $event)">☰</div>
                     <div class="emoji-field" style="flex-shrink: 0;">
                         <input :value="group.emoji" @input="group.emoji = $event.target.value" placeholder="📌" />
                         <button @click="openEmojiPicker({ type: 'group', groupIndex: gi })">🎨</button>
