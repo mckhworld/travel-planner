@@ -230,7 +230,7 @@
             <div class="group-editor-body">
                 <div v-for="(group, gi) in groups" :key="group.id"
                      class="group-editor-item"
-                     :class="{ 'drag-over': groupEditorDragState.overIndex === gi }"
+                     :class="{ 'drag-over': groupEditorDragState.overIndex === gi, 'dragging': groupEditorDragState.draggingIndex === gi }"
                      @dragover.prevent="onDragOverGroupEdit(gi, $event)"
                      @drop="onDropGroupEdit(gi, $event)">
                     <div class="group-editor-drag-handle"
@@ -656,6 +656,10 @@ const onDragStartGroupEdit = (gi, e) => {
     groupEditorDragState.draggingIndex = gi
     e.dataTransfer.effectAllowed = 'move'
     e.dataTransfer.setData('text/plain', '')
+    const item = e.target.closest('.group-editor-item')
+    if (item) {
+        e.dataTransfer.setDragImage(item, e.offsetX, e.offsetY)
+    }
 }
 
 const onDragOverGroupEdit = (gi, e) => {
@@ -1174,6 +1178,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .group-editor-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 8px; transition: all 0.2s; background: white; }
 .group-editor-item:hover { background: #f8f9fa; }
 .group-editor-item.drag-over { border-color: #667eea; background: #f0f4ff; box-shadow: 0 0 0 2px rgba(102,126,234,0.3); }
+.group-editor-item.dragging { opacity: 0.4; }
 .group-editor-drag-handle { cursor: grab; color: #999; font-size: 16px; user-select: none; flex-shrink: 0; }
 .group-editor-drag-handle:active { cursor: grabbing; }
 .group-editor-name { flex: 1; min-width: 0; }
