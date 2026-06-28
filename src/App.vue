@@ -761,6 +761,7 @@ const initMap = () => {
 }
 
 const updateMarkers = () => {
+    const prevMarkerCount = Object.keys(markers).length
     Object.values(markers).forEach(m => map.removeLayer(m))
     markers = {}
     if (pickMarker) { map.removeLayer(pickMarker); pickMarker = null }
@@ -786,10 +787,13 @@ const updateMarkers = () => {
             markers[place.id] = marker
         })
     })
-    const nonNullMarkers = Object.values(markers)
-    if (nonNullMarkers.length > 0) {
-        const group = L.featureGroup(nonNullMarkers)
-        map.fitBounds(group.getBounds().pad(0.1))
+    const newMarkerCount = Object.keys(markers).length
+    if (prevMarkerCount !== newMarkerCount) {
+        const nonNullMarkers = Object.values(markers)
+        if (nonNullMarkers.length > 0) {
+            const group = L.featureGroup(nonNullMarkers)
+            map.fitBounds(group.getBounds().pad(0.1))
+        }
     }
 }
 
