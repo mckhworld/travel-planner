@@ -35,7 +35,7 @@
                         <h2 :style="{ color: getGroupColor(gi), backgroundColor: getGroupColor(gi) + '15' }"
                             @click="group.collapsed = !group.collapsed">
                             <span class="group-name" @click.stop>{{ group.emoji }} {{ group.name }} ({{ group.places.length }})</span>
-                            <button class="delete-group-btn" @click.stop="deleteGroup(gi)" v-if="filteredGroups.length > 1">✕</button>
+                            <button class="edit-group-btn" @click.stop="openGroupEditor()" title="編輯群組">✏️</button>
                         </h2>
                         <div class="region-content" v-show="!group.collapsed">
                             <div v-for="(place, pi) in group.places" :key="place.id"
@@ -67,18 +67,7 @@
                 </div>
             </div>
             <div class="add-group-section">
-                <template v-if="!showAddGroupForm">
-                    <button @click="showAddGroupForm = true">+ 新增群組</button>
-                </template>
-                <div v-else class="add-group-form">
-                    <input v-model="newGroupForm.name" placeholder="群組名稱" @keyup.enter="addGroup" />
-                    <div class="emoji-field" style="width: auto;">
-                        <input :value="newGroupForm.emoji" @input="newGroupForm.emoji = $event.target.value" placeholder="📌" style="height: 34px; font-size: 16px;" />
-                        <button @click="openEmojiPicker({ type: 'group', groupIndex: groups.length })" style="height: 34px; font-size: 16px;">🎨</button>
-                    </div>
-                    <button @click="addGroup" style="background:#27ae60;color:white;">✓</button>
-                    <button @click="showAddGroupForm = false" style="background:#fee;color:#e74c3c;">✕</button>
-                </div>
+                <button @click="openGroupEditor()">+ 新增群組</button>
             </div>
         </div>
 
@@ -231,6 +220,54 @@
                 </div>
             </div>
         </div>
+
+        <div class="group-editor-overlay" v-if="showGroupEditor" @click="closeGroupEditor"></div>
+        <div class="group-editor-panel" :class="{ open: showGroupEditor }">
+            <div class="group-editor-header">
+                <h3>📋 群組管理</h3>
+                <button class="group-editor-close" @click="closeGroupEditor">✕</button>
+            </div>
+            <div class="group-editor-body">
+                <div v-for="(group, gi) in groups" :key="group.id"
+                     class="group-editor-item"
+                     :class="{ 'drag-over': groupEditorDragState.overIndex === gi }"
+                     draggable="true"
+                     @dragstart="onDragStartGroupEdit(gi, $event)"
+                     @dragover.prevent="onDragOverGroupEdit(gi, $event)"
+                     @drop="onDropGroupEdit(gi, $event)">
+                    <div class="group-editor-drag-handle">☰</div>
+                    <div class="emoji-field" style="flex-shrink: 0;">
+                        <input :value="group.emoji" @input="group.emoji = $event.target.value" placeholder="📌" />
+                        <button @click="openEmojiPicker({ type: 'group', groupIndex: gi })">🎨</button>
+                    </div>
+                    <div class="group-editor-name">
+                        <template v-if="editingGroupId === group.id">
+                            <input :value="editingGroupName" @keyup.enter="doRenameGroup(gi)" @blur="cancelRenameGroup" @keyup.escape="cancelRenameGroup" @input="editingGroupName = $event.target.value" style="font-weight:600;font-size:14px;color:#333;border:2px solid #667eea;border-radius:4px;padding:2px 6px;outline:none;width:100%;" />
+                        </template>
+                        <div v-else class="group-editor-name-text">{{ group.name }} ({{ group.places.length }})</div>
+                    </div>
+                    <div class="group-editor-actions">
+                        <button class="group-editor-rename-btn" @click.stop="startRenameGroup(gi)" title="重新命名">✏️</button>
+                        <button class="group-editor-move-btn" @click.stop="moveGroupUp(gi)" :disabled="gi === 0" title="上移">↑</button>
+                        <button class="group-editor-move-btn" @click.stop="moveGroupDown(gi)" :disabled="gi === groups.length - 1" title="下移">↓</button>
+                        <button class="group-editor-delete-btn" @click.stop="deleteGroupFromEditor(gi)" v-if="groups.length > 1" title="刪除群組">✕</button>
+                    </div>
+                </div>
+                <div class="group-editor-empty" v-if="groups.length === 0">
+                    尚無群組
+                </div>
+            </div>
+            <div class="group-editor-footer">
+                <div class="group-editor-add-form">
+                    <input v-model="newGroupForm.name" placeholder="群組名稱" @keyup.enter="addGroupFromEditor" />
+                    <div class="emoji-field">
+                        <input :value="newGroupForm.emoji" @input="newGroupForm.emoji = $event.target.value" placeholder="📌" />
+                        <button @click="openEmojiPicker({ type: 'group', groupIndex: groups.length })">🎨</button>
+                    </div>
+                    <button class="group-editor-add-btn" @click="addGroupFromEditor">✓ 新增</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -252,9 +289,12 @@ const dropdownVisibility = reactive({})
 const filter = reactive({ search: '', region: null, type: null })
 const showEmojiPicker = ref(false)
 const emojiPickerTarget = ref(null)
-const showAddGroupForm = ref(false)
 const newGroupForm = reactive({ name: '', emoji: '📌' })
+const showGroupEditor = ref(false)
+const editingGroupId = ref(null)
+const editingGroupName = ref('')
 const dragState = reactive({ draggingPlace: null, draggingGroup: null, overGroup: null, overPlaceIndex: null, dragOverPosition: null })
+const groupEditorDragState = reactive({ draggingIndex: null, overIndex: null })
 const isMobile = ref(false)
 const mobileSidebarOpen = ref(false)
 const showPlanSelector = ref(false)
@@ -531,7 +571,31 @@ const duplicatePlace = (gi, pi) => {
     nextTick(() => selectPlace(gi, pi + 1))
 }
 
-const addGroup = () => {
+const deleteGroup = (gi) => {
+    if (groups.value.length <= 1) return
+    const targetIndex = gi > 0 ? gi - 1 : 1
+    const targetName = groups.value[targetIndex]?.name || '第一個群組'
+    if (!confirm(`確定刪除群組「${groups.value[gi].name}」？其中的地點將移至「${targetName}」。`)) return
+    const now = new Date().toISOString()
+    const group = groups.value.splice(gi, 1)[0]
+    if (group.places.length > 0) groups.value[targetIndex].places.push(...group.places)
+    const plansData = getAllPlans()
+    if (plansData) updatePlanModified(plansData, currentPlanIdVal.value, now)
+}
+
+const deleteGroupFromEditor = (gi) => {
+    if (groups.value.length <= 1) return
+    const targetIndex = gi > 0 ? gi - 1 : 1
+    const targetName = groups.value[targetIndex]?.name || '第一個群組'
+    if (!confirm(`確定刪除群組「${groups.value[gi].name}」？其中的地點將移至「${targetName}」。`)) return
+    const now = new Date().toISOString()
+    const group = groups.value.splice(gi, 1)[0]
+    if (group.places.length > 0) groups.value[targetIndex].places.push(...group.places)
+    const plansData = getAllPlans()
+    if (plansData) updatePlanModified(plansData, currentPlanIdVal.value, now)
+}
+
+const addGroupFromEditor = () => {
     if (!newGroupForm.name.trim()) return
     const now = new Date().toISOString()
     groups.value.push({
@@ -540,19 +604,79 @@ const addGroup = () => {
     })
     newGroupForm.name = ''
     newGroupForm.emoji = '📌'
-    showAddGroupForm.value = false
     const plansData = getAllPlans()
     if (plansData) updatePlanModified(plansData, currentPlanIdVal.value, now)
 }
 
-const deleteGroup = (gi) => {
-    if (groups.value.length <= 1) return
-    if (!confirm(`確定刪除群組「${groups.value[gi].name}」？其中的地點將移至第一個群組。`)) return
+const openGroupEditor = () => {
+    showGroupEditor.value = true
+    cancelRenameGroup()
+}
+
+const closeGroupEditor = () => {
+    showGroupEditor.value = false
+    cancelRenameGroup()
+}
+
+const startRenameGroup = (gi) => {
+    editingGroupId.value = groups.value[gi].id
+    editingGroupName.value = groups.value[gi].name
+}
+
+const doRenameGroup = (gi) => {
+    if (!editingGroupName.value.trim()) { alert('群組名稱不能為空'); cancelRenameGroup(); return }
+    const group = groups.value[gi]
+    if (!group) { cancelRenameGroup(); return }
+    group.name = editingGroupName.value.trim()
+    group.modified = new Date().toISOString()
+    const plansData = getAllPlans()
+    if (plansData) updatePlanModified(plansData, currentPlanIdVal.value, group.modified)
+    cancelRenameGroup()
+}
+
+const cancelRenameGroup = () => { editingGroupId.value = null; editingGroupName.value = '' }
+
+const moveGroupUp = (gi) => {
+    if (gi === 0) return
     const now = new Date().toISOString()
-    const group = groups.value.splice(gi, 1)[0]
-    if (group.places.length > 0) groups.value[0].places.push(...group.places)
+    ;[groups.value[gi], groups.value[gi - 1]] = [groups.value[gi - 1], groups.value[gi]]
     const plansData = getAllPlans()
     if (plansData) updatePlanModified(plansData, currentPlanIdVal.value, now)
+}
+
+const moveGroupDown = (gi) => {
+    if (gi === groups.value.length - 1) return
+    const now = new Date().toISOString()
+    ;[groups.value[gi], groups.value[gi + 1]] = [groups.value[gi + 1], groups.value[gi]]
+    const plansData = getAllPlans()
+    if (plansData) updatePlanModified(plansData, currentPlanIdVal.value, now)
+}
+
+const onDragStartGroupEdit = (gi, e) => {
+    groupEditorDragState.draggingIndex = gi
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', '')
+}
+
+const onDragOverGroupEdit = (gi, e) => {
+    groupEditorDragState.overIndex = gi
+}
+
+const onDropGroupEdit = (gi, e) => {
+    e.preventDefault()
+    const fromGi = groupEditorDragState.draggingIndex
+    if (fromGi === null || fromGi === gi) {
+        groupEditorDragState.draggingIndex = null
+        groupEditorDragState.overIndex = null
+        return
+    }
+    const now = new Date().toISOString()
+    const group = groups.value.splice(fromGi, 1)[0]
+    groups.value.splice(gi, 0, group)
+    const plansData = getAllPlans()
+    if (plansData) updatePlanModified(plansData, currentPlanIdVal.value, now)
+    groupEditorDragState.draggingIndex = null
+    groupEditorDragState.overIndex = null
 }
 
 const clearFilter = () => { filter.search = ''; filter.type = null }
@@ -1033,5 +1157,45 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     .search-filter input { font-size: 16px; padding: 12px 14px; }
     .place-item { padding: 12px 14px; }
     .place-item .name { font-size: 14px; }
+    .group-editor-panel { width: 100%; }
 }
+
+.group-editor-btn { background: none; border: none; color: #667eea; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
+.group-editor-btn:hover { background: #f0f4ff; }
+.edit-group-btn { background: none; border: none; color: #667eea; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
+.edit-group-btn:hover { background: #f0f4ff; }
+.group-editor-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 1006; }
+.group-editor-panel { position: fixed; top: 0; right: 0; width: 400px; height: 100vh; background: white; box-shadow: -4px 0 16px rgba(0,0,0,0.15); z-index: 1007; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s ease; }
+.group-editor-panel.open { transform: translateX(0); }
+.group-editor-header { padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; justify-content: space-between; align-items: center; }
+.group-editor-header h3 { margin: 0; font-size: 16px; }
+.group-editor-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 4px 8px; }
+.group-editor-body { flex: 1; overflow-y: auto; padding: 12px; }
+.group-editor-item { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 8px; transition: all 0.2s; background: white; }
+.group-editor-item:hover { background: #f8f9fa; }
+.group-editor-item.drag-over { border-color: #667eea; background: #f0f4ff; box-shadow: 0 0 0 2px rgba(102,126,234,0.3); }
+.group-editor-drag-handle { cursor: grab; color: #999; font-size: 16px; user-select: none; flex-shrink: 0; }
+.group-editor-drag-handle:active { cursor: grabbing; }
+.group-editor-name { flex: 1; min-width: 0; }
+.group-editor-name-text { font-weight: 600; font-size: 14px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.group-editor-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.group-editor-actions button { padding: 4px 8px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.group-editor-rename-btn { background: #fff3cd; color: #856404; }
+.group-editor-rename-btn:hover { background: #856404; color: white; }
+.group-editor-move-btn { background: #f0f4ff; color: #667eea; }
+.group-editor-move-btn:hover:not(:disabled) { background: #667eea; color: white; }
+.group-editor-move-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.group-editor-delete-btn { background: #fee; color: #e74c3c; }
+.group-editor-delete-btn:hover { background: #e74c3c; color: white; }
+.group-editor-empty { text-align: center; padding: 40px 20px; color: #999; font-size: 14px; }
+.group-editor-footer { padding: 12px; border-top: 1px solid #dee2e6; }
+.group-editor-add-form { display: flex; gap: 6px; align-items: center; }
+.group-editor-add-form input[type="text"] { flex: 1; padding: 8px 10px; border: 1px solid #dee2e6; border-radius: 6px; font-size: 13px; outline: none; }
+.group-editor-add-form input[type="text"]:focus { border-color: #667eea; box-shadow: 0 0 0 2px rgba(102,126,234,0.15); }
+.group-editor-add-form .emoji-field { display: flex; gap: 4px; align-items: center; }
+.group-editor-add-form .emoji-field input { width: 36px; height: 36px; border: 1px solid #dee2e6; border-radius: 6px; background: white; font-size: 18px; text-align: center; outline: none; }
+.group-editor-add-form .emoji-field button { width: 36px; height: 36px; border: 1px solid #dee2e6; border-radius: 6px; background: white; font-size: 18px; cursor: pointer; }
+.group-editor-add-form .emoji-field button:hover { background: #f0f4ff; }
+.group-editor-add-btn { padding: 8px 16px; border: none; border-radius: 6px; background: #27ae60; color: white; font-size: 13px; cursor: pointer; flex-shrink: 0; }
+.group-editor-add-btn:hover { background: #219a52; }
 </style>
