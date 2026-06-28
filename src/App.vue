@@ -165,6 +165,7 @@
                 <div class="form-actions">
                     <span class="save-status">💾 已自動儲存</span>
                     <a :href="buildMapsLink(currentPlace)" target="_blank" class="detail-link">📍 Google Maps 搜尋</a>
+                    <button class="duplicate-place-btn" @click="duplicatePlace(selectedPlace.groupIndex, selectedPlace.placeIndex)">📋 複製地點</button>
                     <button class="delete-place-btn" @click="deletePlace(selectedPlace.groupIndex, selectedPlace.placeIndex)">🗑️ 刪除地點</button>
                 </div>
             </div>
@@ -510,6 +511,24 @@ const deletePlace = (gi, pi) => {
     updateGroupModified(groups.value[gi], now)
     const plansData = getAllPlans()
     if (plansData) updatePlanModified(plansData, currentPlanIdVal.value, now)
+}
+
+const duplicatePlace = (gi, pi) => {
+    const original = groups.value[gi].places[pi]
+    const now = new Date().toISOString()
+    const clone = {
+        ...original,
+        id: crypto.randomUUID(),
+        name: original.name ? `${original.name} (複製)` : '未命名',
+        links: [...(original.links || [])],
+        created: now,
+        modified: now
+    }
+    groups.value[gi].places.splice(pi + 1, 0, clone)
+    updateGroupModified(groups.value[gi], now)
+    const plansData = getAllPlans()
+    if (plansData) updatePlanModified(plansData, currentPlanIdVal.value, now)
+    nextTick(() => selectPlace(gi, pi + 1))
 }
 
 const addGroup = () => {
@@ -935,7 +954,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .add-link-btn:hover { background: #f0f4ff; }
 .form-actions { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
 .save-status { font-size: 11px; color: #27ae60; }
-.delete-place-btn { margin-left: auto; padding: 6px 12px; border: 1px solid #e74c3c; border-radius: 6px; background: #fee; color: #e74c3c; cursor: pointer; font-size: 12px; }
+.duplicate-place-btn { margin-left: auto; padding: 6px 12px; border: 1px solid #27ae60; border-radius: 6px; background: #efe; color: #27ae60; cursor: pointer; font-size: 12px; }
+.duplicate-place-btn:hover { background: #27ae60; color: white; }
+.delete-place-btn { padding: 6px 12px; border: 1px solid #e74c3c; border-radius: 6px; background: #fee; color: #e74c3c; cursor: pointer; font-size: 12px; }
 .delete-place-btn:hover { background: #e74c3c; color: white; }
 .detail-link { display: inline-block; padding: 8px 14px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-size: 12px; transition: background 0.2s; }
 .detail-link:hover { background: #5568d3; }
