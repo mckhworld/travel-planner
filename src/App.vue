@@ -4,6 +4,7 @@
         <span class="app-title">🗾 旅行地圖</span>
         <span class="plan-name" v-if="currentPlanNameRef">· {{ currentPlanNameRef }}</span>
         <button class="plan-switch-btn" @click="showPlanSelector = !showPlanSelector">📋</button>
+        <button class="plan-switch-btn" @click="showSettingsPanel = !showSettingsPanel">⚙️</button>
     </div>
 
     <div id="main-content">
@@ -194,6 +195,7 @@
                     <div class="plan-actions">
                         <button class="plan-load-btn" @click.stop="doLoadPlan(plan.id)" title="載入行程">載入</button>
                         <button class="plan-download-btn" @click.stop="downloadPlanData(plan)" title="下載行程">📥</button>
+                        <button v-if="drive.isAuthenticated" class="plan-drive-export-btn" @click.stop="openDriveExportForPlan(plan)" title="匯出到 Google Drive">☁️ 匯出(Google Drive)</button>
                         <button class="plan-rename-btn" @click.stop="startRenamePlan(plan)" title="重新命名">✏️</button>
                         <button class="plan-delete-btn" @click.stop="doDeletePlan(plan.id)" v-if="Object.keys(allPlansObjRef).length > 1" title="刪除行程">刪除</button>
                     </div>
@@ -206,6 +208,105 @@
                 <button class="plan-create-btn" @click="showPlanCreateInput = true">➕ 新增行程</button>
                 <input type="file" ref="importFileInput" accept=".json" style="display:none" @change="handlePlanImport" />
                 <button class="plan-import-btn" @click="$refs.importFileInput.click()">📤 匯入行程</button>
+                <template v-if="drive.isAuthenticated">
+                    <button class="plan-drive-import-btn" @click="openDriveFileBrowser">☁️ 從 Google Drive 匯入</button>
+                </template>
+            </div>
+        </div>
+
+        <div class="settings-overlay" v-if="showSettingsPanel" @click="showSettingsPanel = false"></div>
+        <div class="settings-panel" :class="{ open: showSettingsPanel }">
+            <div class="settings-header">
+                <h3>⚙️ 設定</h3>
+                <button class="settings-close" @click="showSettingsPanel = false">✕</button>
+            </div>
+            <div class="settings-body">
+                <div class="settings-section">
+                    <h4>Google Drive</h4>
+                    <template v-if="drive.isAuthenticated && drive.userProfile">
+                        <div class="drive-user-info">
+                            <img v-if="drive.userProfile.picture" :src="drive.userProfile.picture" class="drive-user-avatar" alt="avatar" />
+                            <div class="drive-user-details">
+                                <div class="drive-user-name">{{ drive.userProfile.name }}</div>
+                                <div class="drive-user-email">{{ drive.userProfile.email }}</div>
+                            </div>
+                        </div>
+                        <button class="drive-logout-btn" @click="drive.logout()">登出 Google Drive</button>
+                    </template>
+                    <template v-else>
+                        <p class="drive-disconnect-msg">未連接 Google Drive</p>
+                        <button class="drive-login-btn" @click="handleDriveLogin" :disabled="drive.isLoading">
+                            {{ drive.isLoading ? '登入中...' : '連接 Google Drive' }}
+                        </button>
+                    </template>
+                    <div v-if="drive.loginError" class="drive-error-msg">{{ drive.loginError }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="drive-file-browser-overlay" v-if="showDriveFileBrowser" @click="closeDriveFileBrowser">
+            <div class="drive-file-browser" @click.stop>
+                <div class="drive-file-browser-header">
+                    <h4>從 Google Drive 匯入行程</h4>
+                    <button class="drive-file-browser-close" @click="closeDriveFileBrowser">✕</button>
+                </div>
+                <div class="drive-file-browser-body">
+                    <div v-if="drive.isLoading" class="drive-loading">載入檔案列表中...</div>
+                    <div v-else-if="driveFileList.length === 0" class="drive-empty">Google Drive 中沒有找到 JSON 檔案</div>
+                    <div v-else class="drive-file-list">
+                        <div v-for="file in driveFileList" :key="file.id"
+                             class="drive-file-item"
+                             :class="{ selected: selectedDriveFile?.id === file.id }"
+                             @click="selectedDriveFile = file">
+                            <div class="drive-file-info">
+                                <div class="drive-file-name">📄 {{ file.name }}</div>
+                                <div class="drive-file-meta">{{ formatFileSize(file.size) }} · {{ formatDate(file.modifiedTime) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="drive-file-browser-footer">
+                    <button class="drive-cancel-btn" @click="closeDriveFileBrowser">取消</button>
+                    <button class="drive-import-btn" @click="confirmDriveImport" :disabled="!selectedDriveFile || drive.isLoading">
+                        {{ drive.isLoading ? '匯入中...' : '匯入' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="drive-export-overlay" v-if="showDriveExportDialog" @click="closeDriveExportDialog">
+            <div class="drive-export-dialog" @click.stop>
+                <div class="drive-export-header">
+                    <h4>☁️ 匯出到 Google Drive</h4>
+                    <button class="drive-export-close" @click="closeDriveExportDialog">✕</button>
+                </div>
+                <div class="drive-export-body">
+                    <div class="form-field">
+                        <label>檔案名稱</label>
+                        <input v-model="driveExportFilename" placeholder="行程名稱.json" />
+                    </div>
+                    <div v-if="driveExportExistingFiles.length > 0" class="drive-existing-files">
+                        <p class="drive-existing-title">現有同名檔案（可選擇覆蓋）：</p>
+                        <div v-for="file in driveExportExistingFiles" :key="file.id"
+                             class="drive-file-item"
+                             :class="{ selected: selectedOverwriteFile?.id === file.id }"
+                             @click="selectedOverwriteFile = file">
+                            <div class="drive-file-info">
+                                <div class="drive-file-name">📄 {{ file.name }}</div>
+                                <div class="drive-file-meta">{{ formatFileSize(file.size) }} · {{ formatDate(file.modifiedTime) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="drive-export-footer">
+                    <button class="drive-cancel-btn" @click="closeDriveExportDialog">取消</button>
+                    <button v-if="selectedOverwriteFile" class="drive-overwrite-btn" @click="confirmDriveOverwrite" :disabled="drive.isLoading">
+                        {{ drive.isLoading ? '覆蓋中...' : '覆蓋檔案' }}
+                    </button>
+                    <button class="drive-upload-btn" @click="doDriveUpload" :disabled="!driveExportFilename.trim() || drive.isLoading">
+                        {{ drive.isLoading ? '上傳中...' : '上傳新檔案' }}
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -282,6 +383,8 @@ import {
     importPlan as importPlanStorage, loadPlan as loadPlanStorage,
     downloadPlanData
 } from './utils/storage.js'
+import { validatePlanJson } from './utils/validatePlanJson.js'
+import { useGoogleDrive } from './composables/useGoogleDrive.js'
 
 const groups = ref([])
 const selectedPlace = ref(null)
@@ -309,6 +412,17 @@ const allPlansObjRef = ref({})
 const allPlansListRef = ref([])
 const currentPlanNameRef = ref('')
 const mapPickMode = ref(false)
+
+const drive = useGoogleDrive()
+const showSettingsPanel = ref(false)
+const showDriveFileBrowser = ref(false)
+const showDriveExportDialog = ref(false)
+const driveFileList = ref([])
+const selectedDriveFile = ref(null)
+const exportPlanRef = ref(null)
+const driveExportFilename = ref('')
+const driveExportExistingFiles = ref([])
+const selectedOverwriteFile = ref(null)
 
 let map = null
 let markers = {}
@@ -841,7 +955,8 @@ const handlePlanImport = (e) => {
     reader.onload = (ev) => {
         try {
             const data = JSON.parse(ev.target.result)
-            if (!data.groups || !Array.isArray(data.groups)) { alert('JSON 格式錯誤：缺少 groups 陣列'); return }
+            const validation = validatePlanJson(data)
+            if (!validation.valid) { alert(validation.error); return }
             const defaultData = createDefaultData()
             const planId = importPlanStorage(data, defaultData.groups)
             currentPlanIdVal.value = planId
@@ -852,6 +967,127 @@ const handlePlanImport = (e) => {
     }
     reader.readAsText(file)
     e.target.value = ''
+}
+
+const handleDriveLogin = () => {
+    drive.login()
+}
+
+const openDriveFileBrowser = async () => {
+    showDriveFileBrowser.value = true
+    selectedDriveFile.value = null
+    try {
+        driveFileList.value = await drive.listJsonFiles()
+    } catch (err) {
+        alert(err.message)
+        closeDriveFileBrowser()
+    }
+}
+
+const closeDriveFileBrowser = () => {
+    showDriveFileBrowser.value = false
+    selectedDriveFile.value = null
+}
+
+const confirmDriveImport = async () => {
+    if (!selectedDriveFile.value) return
+    try {
+        const data = await drive.downloadFile(selectedDriveFile.value.id)
+        const validation = validatePlanJson(data)
+        if (!validation.valid) {
+            alert(`JSON 驗證失敗：${validation.error}`)
+            return
+        }
+        const defaultData = createDefaultData()
+        const planId = importPlanStorage(data, defaultData.groups)
+        currentPlanIdVal.value = planId
+        groups.value = JSON.parse(JSON.stringify(getAllPlans().plans[planId].groups))
+        refreshPlanRefs()
+        closeDriveFileBrowser()
+        showPlanSelector.value = false
+    } catch (err) {
+        alert(err.message)
+    }
+}
+
+const openDriveExportForPlan = (plan) => {
+    exportPlanRef.value = plan
+    driveExportFilename.value = `${plan.name}-${new Date().toISOString().slice(0, 10)}.json`
+    selectedOverwriteFile.value = null
+    showDriveExportDialog.value = true
+    loadExistingFilesForExport(plan.name)
+}
+
+const loadExistingFilesForExport = async (planName) => {
+    try {
+        const files = await drive.listJsonFiles()
+        driveExportExistingFiles.value = files.filter(f => f.name.startsWith(planName))
+    } catch {
+        driveExportExistingFiles.value = []
+    }
+}
+
+const closeDriveExportDialog = () => {
+    showDriveExportDialog.value = false
+    exportPlanRef.value = null
+    selectedOverwriteFile.value = null
+}
+
+const doDriveUpload = async () => {
+    if (!exportPlanRef.value || !driveExportFilename.value.trim()) return
+    const plansData = getAllPlans()
+    const planData = {
+        id: exportPlanRef.value.id,
+        name: exportPlanRef.value.name,
+        groups: JSON.parse(JSON.stringify(exportPlanRef.value.groups)),
+        _meta: {
+            version: '1.0',
+            created: exportPlanRef.value._meta?.created,
+            modified: exportPlanRef.value._meta?.modified,
+            lastSaved: new Date().toISOString(),
+            planName: exportPlanRef.value.name
+        }
+    }
+    try {
+        await drive.uploadFile(driveExportFilename.value.trim(), planData)
+        alert('匯出成功！')
+        closeDriveExportDialog()
+    } catch (err) {
+        alert(err.message)
+    }
+}
+
+const confirmDriveOverwrite = async () => {
+    if (!selectedOverwriteFile.value || !exportPlanRef.value) return
+    if (!confirm(`確定要覆蓋「${selectedOverwriteFile.value.name}」嗎？`)) return
+    const plansData = getAllPlans()
+    const planData = {
+        id: exportPlanRef.value.id,
+        name: exportPlanRef.value.name,
+        groups: JSON.parse(JSON.stringify(exportPlanRef.value.groups)),
+        _meta: {
+            version: '1.0',
+            created: exportPlanRef.value._meta?.created,
+            modified: exportPlanRef.value._meta?.modified,
+            lastSaved: new Date().toISOString(),
+            planName: exportPlanRef.value.name
+        }
+    }
+    try {
+        await drive.overwriteFile(selectedOverwriteFile.value.id, planData)
+        alert('覆蓋成功！')
+        closeDriveExportDialog()
+    } catch (err) {
+        alert(err.message)
+    }
+}
+
+const formatFileSize = (bytes) => {
+    if (!bytes) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
 }
 const doRenamePlan = (planId) => {
     if (!editingPlanName.value.trim()) { alert('行程名稱不能為空'); cancelRenamePlan(); return }
@@ -1203,4 +1439,74 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .group-editor-add-form .emoji-field button:hover { background: #f0f4ff; }
 .group-editor-add-btn { padding: 8px 16px; border: none; border-radius: 6px; background: #27ae60; color: white; font-size: 13px; cursor: pointer; flex-shrink: 0; }
 .group-editor-add-btn:hover { background: #219a52; }
+
+.plan-drive-export-btn { background: #fff3e0; color: #e65100; }
+.plan-drive-export-btn:hover { background: #e65100; color: white; }
+.plan-drive-import-btn { background: #fff3e0; color: #e65100; }
+.plan-drive-import-btn:hover { background: #e65100; color: white; }
+
+.settings-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 1008; }
+.settings-panel { position: fixed; top: 0; right: 0; width: 360px; height: 100vh; background: white; box-shadow: -4px 0 16px rgba(0,0,0,0.15); z-index: 1009; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s ease; }
+.settings-panel.open { transform: translateX(0); }
+.settings-header { padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; justify-content: space-between; align-items: center; }
+.settings-header h3 { margin: 0; font-size: 16px; }
+.settings-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 4px 8px; }
+.settings-body { flex: 1; overflow-y: auto; padding: 16px; }
+.settings-section { margin-bottom: 20px; }
+.settings-section h4 { font-size: 14px; color: #333; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #dee2e6; }
+.drive-user-info { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.drive-user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.drive-user-details { flex: 1; }
+.drive-user-name { font-weight: 600; font-size: 14px; color: #333; }
+.drive-user-email { font-size: 12px; color: #666; }
+.drive-disconnect-msg { font-size: 13px; color: #999; margin-bottom: 12px; }
+.drive-login-btn { width: 100%; padding: 10px; border: none; border-radius: 8px; background: #4285f4; color: white; font-size: 13px; cursor: pointer; transition: background 0.2s; }
+.drive-login-btn:hover:not(:disabled) { background: #3367d6; }
+.drive-login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.drive-logout-btn { width: 100%; padding: 10px; border: 1px solid #e74c3c; border-radius: 8px; background: #fee; color: #e74c3c; font-size: 13px; cursor: pointer; transition: background 0.2s; }
+.drive-logout-btn:hover { background: #e74c3c; color: white; }
+.drive-error-msg { color: #e74c3c; font-size: 12px; margin-top: 8px; }
+
+.drive-file-browser-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 1010; display: flex; align-items: center; justify-content: center; }
+.drive-file-browser { width: 480px; max-width: 90vw; max-height: 80vh; background: white; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }
+.drive-file-browser-header { padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; justify-content: space-between; align-items: center; }
+.drive-file-browser-header h4 { margin: 0; font-size: 15px; }
+.drive-file-browser-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 4px 8px; }
+.drive-file-browser-body { flex: 1; overflow-y: auto; padding: 12px; min-height: 0; }
+.drive-file-browser-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px; border-top: 1px solid #dee2e6; }
+.drive-file-item { padding: 10px 12px; border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: all 0.2s; }
+.drive-file-item:hover { background: #f8f9fa; }
+.drive-file-item.selected { border-color: #667eea; background: #f0f4ff; }
+.drive-file-info { display: flex; flex-direction: column; gap: 2px; }
+.drive-file-name { font-weight: 500; font-size: 13px; color: #333; }
+.drive-file-meta { font-size: 11px; color: #999; }
+.drive-loading { text-align: center; padding: 40px 20px; color: #999; font-size: 14px; }
+.drive-empty { text-align: center; padding: 40px 20px; color: #999; font-size: 14px; }
+.drive-cancel-btn { padding: 8px 16px; border: 1px solid #dee2e6; border-radius: 8px; background: white; color: #666; font-size: 13px; cursor: pointer; }
+.drive-cancel-btn:hover { background: #f8f9fa; }
+.drive-import-btn { padding: 8px 20px; border: none; border-radius: 8px; background: #667eea; color: white; font-size: 13px; cursor: pointer; }
+.drive-import-btn:hover:not(:disabled) { background: #5568d3; }
+.drive-import-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.drive-export-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 1010; display: flex; align-items: center; justify-content: center; }
+.drive-export-dialog { width: 480px; max-width: 90vw; background: white; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }
+.drive-export-header { padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; justify-content: space-between; align-items: center; }
+.drive-export-header h4 { margin: 0; font-size: 15px; }
+.drive-export-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 4px 8px; }
+.drive-export-body { padding: 16px; }
+.drive-existing-files { margin-top: 12px; border-top: 1px solid #dee2e6; padding-top: 12px; }
+.drive-existing-title { font-size: 12px; color: #666; margin-bottom: 8px; }
+.drive-export-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px; border-top: 1px solid #dee2e6; flex-wrap: wrap; }
+.drive-upload-btn { padding: 8px 20px; border: none; border-radius: 8px; background: #27ae60; color: white; font-size: 13px; cursor: pointer; }
+.drive-upload-btn:hover:not(:disabled) { background: #219a52; }
+.drive-upload-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.drive-overwrite-btn { padding: 8px 20px; border: none; border-radius: 8px; background: #e65100; color: white; font-size: 13px; cursor: pointer; }
+.drive-overwrite-btn:hover:not(:disabled) { background: #bf360c; }
+.drive-overwrite-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 768px) {
+    .settings-panel { width: 100%; }
+    .drive-file-browser { width: 95vw; max-height: 90vh; }
+    .drive-export-dialog { width: 95vw; }
+}
 </style>

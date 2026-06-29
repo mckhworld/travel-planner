@@ -16,6 +16,10 @@ logs/
 *.swo
 *~
 
+# Env
+.env
+.env.local
+
 # OS
 .DS_Store
 Thumbs.db
