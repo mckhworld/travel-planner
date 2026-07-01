@@ -1,5 +1,5 @@
-import { ref, computed } from 'vue'
-import { useTokenClient, revokeAccessToken } from 'vue3-google-signin'
+import { reactive } from 'vue'
+import { useTokenClient } from 'vue3-google-signin'
 
 const TOKEN_KEY = 'google-drive-token'
 const USER_KEY = 'google-drive-user'
@@ -38,10 +38,12 @@ function saveUserToStorage(user) {
 }
 
 export function useGoogleDrive() {
-    const isAuthenticated = ref(false)
-    const userProfile = ref(null)
-    const loginError = ref('')
-    const isLoading = ref(false)
+    const state = reactive({
+        isAuthenticated: false,
+        userProfile: null,
+        loginError: '',
+        isLoading: false,
+    })
 
     function isTokenValid(stored) {
         if (!stored) return false
@@ -55,8 +57,8 @@ export function useGoogleDrive() {
             return stored.access_token
         }
         clearTokenFromStorage()
-        isAuthenticated.value = false
-        userProfile.value = null
+        state.isAuthenticated = false
+        state.userProfile = null
         return null
     }
 
@@ -64,11 +66,11 @@ export function useGoogleDrive() {
         const stored = getTokenFromStorage()
         const user = getUserFromStorage()
         if (stored && isTokenValid(stored)) {
-            isAuthenticated.value = true
-            userProfile.value = user
+            state.isAuthenticated = true
+            state.userProfile = user
         } else {
-            isAuthenticated.value = false
-            userProfile.value = null
+            state.isAuthenticated = false
+            state.userProfile = null
         }
     }
 
@@ -91,33 +93,24 @@ export function useGoogleDrive() {
             }
             saveUserToStorage(user)
 
-            isAuthenticated.value = true
-            userProfile.value = user
-            loginError.value = ''
+            state.isAuthenticated = true
+            state.userProfile = user
+            state.loginError = ''
         },
-        onError: (error) => {
-            loginError.value = 'Google 登入失敗，請稍後再試'
+        onError: () => {
+            state.loginError = 'Google 登入失敗，請稍後再試'
         },
     })
 
     function login() {
-        loginError.value = ''
+        state.loginError = ''
         googleLogin()
     }
 
     function logout() {
-        const token = getValidToken()
-        if (token) {
-            revokeAccessToken(token, () => {
-                clearTokenFromStorage()
-                isAuthenticated.value = false
-                userProfile.value = null
-            })
-        } else {
-            clearTokenFromStorage()
-            isAuthenticated.value = false
-            userProfile.value = null
-        }
+        clearTokenFromStorage()
+        state.isAuthenticated = false
+        state.userProfile = null
     }
 
     async function driveRequest(path, options = {}) {
@@ -136,8 +129,8 @@ export function useGoogleDrive() {
 
         if (response.status === 401) {
             clearTokenFromStorage()
-            isAuthenticated.value = false
-            userProfile.value = null
+            state.isAuthenticated = false
+            state.userProfile = null
             throw new Error('登入已過期，請重新連接')
         }
 
@@ -150,7 +143,7 @@ export function useGoogleDrive() {
     }
 
     async function listJsonFiles() {
-        isLoading.value = true
+        state.isLoading = true
         try {
             const response = await driveRequest(
                 '/files?q=mimeType=\'application/json\'&fields=files(id,name,mimeType,size,modifiedTime,createdTime)'
@@ -158,23 +151,23 @@ export function useGoogleDrive() {
             const data = await response.json()
             return (data.files || []).sort((a, b) => (b.modifiedTime || '').localeCompare(a.modifiedTime || ''))
         } finally {
-            isLoading.value = false
+            state.isLoading = false
         }
     }
 
     async function downloadFile(fileId) {
-        isLoading.value = true
+        state.isLoading = true
         try {
             const response = await driveRequest(`/files/${fileId}?alt=media`)
             const text = await response.text()
             return JSON.parse(text)
         } finally {
-            isLoading.value = false
+            state.isLoading = false
         }
     }
 
     async function uploadFile(name, jsonContent) {
-        isLoading.value = true
+        state.isLoading = true
         try {
             const token = getValidToken()
             if (!token) throw new Error('未登入 Google Drive')
@@ -200,8 +193,8 @@ export function useGoogleDrive() {
 
             if (response.status === 401) {
                 clearTokenFromStorage()
-                isAuthenticated.value = false
-                userProfile.value = null
+                state.isAuthenticated = false
+                state.userProfile = null
                 throw new Error('登入已過期，請重新連接')
             }
 
@@ -212,12 +205,12 @@ export function useGoogleDrive() {
 
             return await response.json()
         } finally {
-            isLoading.value = false
+            state.isLoading = false
         }
     }
 
     async function overwriteFile(fileId, jsonContent) {
-        isLoading.value = true
+        state.isLoading = true
         try {
             const token = getValidToken()
             if (!token) throw new Error('未登入 Google Drive')
@@ -241,8 +234,8 @@ export function useGoogleDrive() {
 
             if (response.status === 401) {
                 clearTokenFromStorage()
-                isAuthenticated.value = false
-                userProfile.value = null
+                state.isAuthenticated = false
+                state.userProfile = null
                 throw new Error('登入已過期，請重新連接')
             }
 
@@ -253,15 +246,12 @@ export function useGoogleDrive() {
 
             return await response.json()
         } finally {
-            isLoading.value = false
+            state.isLoading = false
         }
     }
 
-    return {
-        isAuthenticated,
-        userProfile,
-        loginError,
-        isLoading,
+    const drive = reactive({
+        ...state,
         login,
         logout,
         listJsonFiles,
@@ -269,5 +259,7 @@ export function useGoogleDrive() {
         uploadFile,
         overwriteFile,
         refreshAuthState,
-    }
+    })
+
+    return drive
 }

@@ -1010,12 +1010,12 @@ const confirmDriveImport = async () => {
     }
 }
 
-const openDriveExportForPlan = (plan) => {
+const openDriveExportForPlan = async (plan) => {
     exportPlanRef.value = plan
     driveExportFilename.value = `${plan.name}-${new Date().toISOString().slice(0, 10)}.json`
     selectedOverwriteFile.value = null
+    await loadExistingFilesForExport(plan.name)
     showDriveExportDialog.value = true
-    loadExistingFilesForExport(plan.name)
 }
 
 const loadExistingFilesForExport = async (planName) => {
