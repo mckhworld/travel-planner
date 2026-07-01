@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, nextTick } from 'vue'
 import { useTokenClient } from 'vue3-google-signin'
 
 const TOKEN_KEY = 'google-drive-token'
@@ -93,12 +93,16 @@ export function useGoogleDrive() {
             }
             saveUserToStorage(user)
 
-            state.isAuthenticated = true
-            state.userProfile = user
-            state.loginError = ''
+            nextTick(() => {
+                state.isAuthenticated = true
+                state.userProfile = user
+                state.loginError = ''
+            })
         },
         onError: () => {
-            state.loginError = 'Google 登入失敗，請稍後再試'
+            nextTick(() => {
+                state.loginError = 'Google 登入失敗，請稍後再試'
+            })
         },
     })
 
