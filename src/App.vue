@@ -1261,6 +1261,7 @@ watch(groups, () => {
     })
     const plansData = getAllPlans()
     if (plansData) saveToLocalStorage(plansData, currentPlanIdVal.value, groups.value)
+    initialSnapshot = getDirtyState()
 }, { deep: true })
 
 let hasInteracted = false
