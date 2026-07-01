@@ -302,21 +302,13 @@ export function useGoogleDrive() {
             const token = getValidToken()
             if (!token) throw new Error('未登入 Google Drive')
 
-            const body = JSON.stringify(jsonContent, null, 2)
-
-            const boundary = '----WebKitFormBoundary' + Math.random().toString(36).slice(2)
-            const blob = new Blob([
-                `--${boundary}\r\nContent-Type: application/json\r\n\r\n${body}\r\n`,
-                `--${boundary}--\r\n`,
-            ], { type: `multipart/related; boundary=${boundary}` })
-
-            const response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`, {
+            const response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    'Content-Type': `multipart/related; boundary=${boundary}`,
+                    'Content-Type': 'application/json',
                 },
-                body: blob,
+                body: JSON.stringify(jsonContent, null, 2),
             })
 
             if (response.status === 401) {
