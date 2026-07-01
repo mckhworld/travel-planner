@@ -4,7 +4,7 @@
         <span class="app-title">🗾 旅行地圖</span>
         <span class="plan-name" v-if="currentPlanNameRef">· {{ currentPlanNameRef }}</span>
         <button class="plan-switch-btn" @click="showPlanSelector = !showPlanSelector">📋</button>
-        <button class="plan-switch-btn" @click="showSettingsPanel = !showSettingsPanel">⚙️</button>
+        <button class="plan-switch-btn" @click="openSettings">⚙️</button>
     </div>
 
     <div id="main-content">
@@ -232,6 +232,36 @@
                             </div>
                         </div>
                         <button class="drive-logout-btn" @click="drive.logout()">登出 Google Drive</button>
+
+                        <div class="drive-folder-section">
+                            <h4>行程資料夾</h4>
+                            <p class="drive-folder-desc">匯入/匯出的行程檔案會存放在此資料夾</p>
+                            <div v-if="driveFolderList.length === 0 && !drive.isLoading" class="drive-folder-empty">
+                                尚未建立資料夾，請点击下方按鈕建立
+                            </div>
+                            <div v-if="drive.isLoading" class="drive-loading">載入中...</div>
+                            <div v-else-if="driveFolderList.length > 0" class="drive-folder-list">
+                                <div v-for="folder in driveFolderList" :key="folder.id"
+                                     class="drive-folder-item"
+                                     :class="{ selected: drive.selectedFolderId === folder.id }"
+                                     @click="drive.selectFolder(folder.id)">
+                                    <div class="drive-folder-name">📁 {{ folder.name }}</div>
+                                </div>
+                            </div>
+                            <div class="drive-folder-actions">
+                                <button class="drive-create-folder-btn" @click="showCreateFolderInput = true" :disabled="drive.isLoading">
+                                    ➕ 建立資料夾
+                                </button>
+                                <button v-if="!drive.selectedFolderId" class="drive-init-folder-btn" @click="initDefaultFolder" :disabled="drive.isLoading">
+                                    🚀 初始化預設資料夾
+                                </button>
+                            </div>
+                            <div v-if="showCreateFolderInput" class="drive-create-folder-input">
+                                <input v-model="newFolderName" placeholder="資料夾名稱" @keyup.enter="handleCreateFolder" />
+                                <button @click="handleCreateFolder" :disabled="!newFolderName.trim()">建立</button>
+                                <button @click="showCreateFolderInput = false" style="background:#fee;color:#e74c3c;">取消</button>
+                            </div>
+                        </div>
                     </template>
                     <template v-else>
                         <p class="drive-disconnect-msg">未連接 Google Drive</p>
@@ -419,6 +449,9 @@ const showDriveFileBrowser = ref(false)
 const showDriveExportDialog = ref(false)
 const driveFileList = ref([])
 const selectedDriveFile = ref(null)
+const driveFolderList = ref([])
+const showCreateFolderInput = ref(false)
+const newFolderName = ref('')
 const exportPlanRef = ref(null)
 const driveExportFilename = ref('')
 const driveExportExistingFiles = ref([])
@@ -969,8 +1002,48 @@ const handlePlanImport = (e) => {
     e.target.value = ''
 }
 
+const openSettings = async () => {
+    showSettingsPanel.value = true
+    if (drive.isAuthenticated) {
+        await loadDriveFolders()
+    }
+}
+
 const handleDriveLogin = () => {
     drive.login()
+    loadDriveFolders()
+}
+
+const initDefaultFolder = async () => {
+    try {
+        const folder = await drive.ensureDefaultFolder()
+        drive.selectFolder(folder.id)
+        await loadDriveFolders()
+    } catch (err) {
+        alert(err.message)
+    }
+}
+
+const loadDriveFolders = async () => {
+    if (!drive.isAuthenticated) return
+    try {
+        driveFolderList.value = await drive.listFolders()
+    } catch {
+        driveFolderList.value = []
+    }
+}
+
+const handleCreateFolder = async () => {
+    if (!newFolderName.value.trim()) return
+    try {
+        const folder = await drive.createFolder(newFolderName.value.trim())
+        drive.selectFolder(folder.id)
+        showCreateFolderInput.value = false
+        newFolderName.value = ''
+        await loadDriveFolders()
+    } catch (err) {
+        alert(err.message)
+    }
 }
 
 const openDriveFileBrowser = async () => {
@@ -1466,6 +1539,27 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .drive-logout-btn { width: 100%; padding: 10px; border: 1px solid #e74c3c; border-radius: 8px; background: #fee; color: #e74c3c; font-size: 13px; cursor: pointer; transition: background 0.2s; }
 .drive-logout-btn:hover { background: #e74c3c; color: white; }
 .drive-error-msg { color: #e74c3c; font-size: 12px; margin-top: 8px; }
+.drive-folder-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #dee2e6; }
+.drive-folder-section h4 { font-size: 13px; color: #333; margin-bottom: 6px; }
+.drive-folder-desc { font-size: 11px; color: #999; margin-bottom: 12px; }
+.drive-folder-empty { text-align: center; padding: 20px; color: #999; font-size: 12px; }
+.drive-folder-list { max-height: 200px; overflow-y: auto; margin-bottom: 12px; }
+.drive-folder-item { padding: 8px 10px; border: 1px solid #dee2e6; border-radius: 6px; margin-bottom: 4px; cursor: pointer; transition: all 0.2s; }
+.drive-folder-item:hover { background: #f8f9fa; }
+.drive-folder-item.selected { border-color: #667eea; background: #f0f4ff; }
+.drive-folder-name { font-size: 12px; color: #333; }
+.drive-folder-actions { display: flex; flex-direction: column; gap: 6px; }
+.drive-create-folder-btn, .drive-init-folder-btn { width: 100%; padding: 8px; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+.drive-create-folder-btn { background: #f0f4ff; color: #667eea; }
+.drive-create-folder-btn:hover:not(:disabled) { background: #667eea; color: white; }
+.drive-create-folder-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.drive-init-folder-btn { background: #27ae60; color: white; }
+.drive-init-folder-btn:hover:not(:disabled) { background: #219a52; }
+.drive-init-folder-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.drive-create-folder-input { display: flex; gap: 6px; margin-top: 8px; }
+.drive-create-folder-input input { flex: 1; padding: 6px 8px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; }
+.drive-create-folder-input button { padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; background: #27ae60; color: white; }
+.drive-create-folder-input button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .drive-file-browser-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 1010; display: flex; align-items: center; justify-content: center; }
 .drive-file-browser { width: 480px; max-width: 90vw; max-height: 80vh; background: white; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }

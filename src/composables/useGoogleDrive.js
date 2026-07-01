@@ -3,6 +3,8 @@ import { useTokenClient } from 'vue3-google-signin'
 
 const TOKEN_KEY = 'google-drive-token'
 const USER_KEY = 'google-drive-user'
+const FOLDER_KEY = 'google-drive-folder'
+const DEFAULT_FOLDER_NAME = '.travel-planner-files'
 
 function getTokenFromStorage() {
     const raw = localStorage.getItem(TOKEN_KEY)
@@ -37,12 +39,25 @@ function saveUserToStorage(user) {
     localStorage.setItem(USER_KEY, JSON.stringify(user))
 }
 
+function getFolderFromStorage() {
+    return localStorage.getItem(FOLDER_KEY) || null
+}
+
+function saveFolderToStorage(folderId) {
+    if (folderId) {
+        localStorage.setItem(FOLDER_KEY, folderId)
+    } else {
+        localStorage.removeItem(FOLDER_KEY)
+    }
+}
+
 export function useGoogleDrive() {
     const state = reactive({
         isAuthenticated: false,
         userProfile: null,
         loginError: '',
         isLoading: false,
+        selectedFolderId: getFolderFromStorage(),
     })
 
     function isTokenValid(stored) {
@@ -75,6 +90,69 @@ export function useGoogleDrive() {
     }
 
     refreshAuthState()
+
+    async function ensureDefaultFolder() {
+        const response = await driveRequest(
+            `/files?q=name='${DEFAULT_FOLDER_NAME}'+and+mimeType='application/vnd.google-apps.folder'+and+trashed=false&fields=files(id,name)`
+        )
+        const data = await response.json()
+        if (data.files && data.files.length > 0) {
+            return data.files[0]
+        }
+
+        const createResponse = await fetch('https://www.googleapis.com/drive/v3/files', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${getValidToken()}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: DEFAULT_FOLDER_NAME,
+                mimeType: 'application/vnd.google-apps.folder',
+            }),
+        })
+
+        if (!createResponse.ok) {
+            const errorBody = await createResponse.json().catch(() => ({}))
+            throw new Error(errorBody.error?.message || `建立資料夾失敗`)
+        }
+
+        return createResponse.json()
+    }
+
+    async function listFolders() {
+        const response = await driveRequest(
+            '/files?q=mimeType=\'application/vnd.google-apps.folder\'&fields=files(id,name)'
+        )
+        const data = await response.json()
+        return (data.files || []).sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+    async function createFolder(name) {
+        const response = await fetch('https://www.googleapis.com/drive/v3/files', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${getValidToken()}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name,
+                mimeType: 'application/vnd.google-apps.folder',
+            }),
+        })
+
+        if (!response.ok) {
+            const errorBody = await response.json().catch(() => ({}))
+            throw new Error(errorBody.error?.message || `建立資料夾失敗`)
+        }
+
+        return response.json()
+    }
+
+    function selectFolder(folderId) {
+        state.selectedFolderId = folderId
+        saveFolderToStorage(folderId)
+    }
 
     const { login: googleLogin } = useTokenClient({
         scope: 'https://www.googleapis.com/auth/drive.file',
@@ -149,8 +227,12 @@ export function useGoogleDrive() {
     async function listJsonFiles() {
         state.isLoading = true
         try {
+            const folderId = state.selectedFolderId
+            const query = folderId
+                ? `parents='${folderId}'+and+mimeType='application/json'+and+trashed=false`
+                : 'mimeType=\'application/json\'&trashed=false'
             const response = await driveRequest(
-                '/files?q=mimeType=\'application/json\'&fields=files(id,name,mimeType,size,modifiedTime,createdTime)'
+                `/files?q=${query}&fields=files(id,name,mimeType,size,modifiedTime,createdTime)`
             )
             const data = await response.json()
             return (data.files || []).sort((a, b) => (b.modifiedTime || '').localeCompare(a.modifiedTime || ''))
@@ -176,7 +258,8 @@ export function useGoogleDrive() {
             const token = getValidToken()
             if (!token) throw new Error('未登入 Google Drive')
 
-            const metadata = JSON.stringify({ name, mimeType: 'application/json' })
+            const folderId = state.selectedFolderId
+            const metadata = JSON.stringify({ name, mimeType: 'application/json', parents: folderId ? [folderId] : undefined })
             const body = JSON.stringify(jsonContent, null, 2)
 
             const boundary = '----WebKitFormBoundary' + Math.random().toString(36).slice(2)
@@ -263,6 +346,10 @@ export function useGoogleDrive() {
         uploadFile,
         overwriteFile,
         refreshAuthState,
+        ensureDefaultFolder,
+        listFolders,
+        createFolder,
+        selectFolder,
     })
 
     return drive
