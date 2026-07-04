@@ -51,7 +51,7 @@ function saveFolderToStorage(folderId) {
     }
 }
 
-export function useGoogleDrive() {
+export function useGoogleDrive({ onAuthSuccess } = {}) {
     const state = reactive({
         isAuthenticated: false,
         userProfile: null,
@@ -175,6 +175,9 @@ export function useGoogleDrive() {
                 state.isAuthenticated = true
                 state.userProfile = user
                 state.loginError = ''
+                if (typeof onAuthSuccess === 'function') {
+                    onAuthSuccess()
+                }
             })
         },
         onError: () => {

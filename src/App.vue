@@ -443,7 +443,11 @@ const allPlansListRef = ref([])
 const currentPlanNameRef = ref('')
 const mapPickMode = ref(false)
 
-const drive = useGoogleDrive()
+const drive = useGoogleDrive({
+    onAuthSuccess: async () => {
+        await loadDriveFolders()
+    }
+})
 const showSettingsPanel = ref(false)
 const showDriveFileBrowser = ref(false)
 const showDriveExportDialog = ref(false)
@@ -1011,7 +1015,6 @@ const openSettings = async () => {
 
 const handleDriveLogin = () => {
     drive.login()
-    loadDriveFolders()
 }
 
 const initDefaultFolder = async () => {
