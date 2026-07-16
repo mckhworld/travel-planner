@@ -1198,5 +1198,85 @@
     "x": 576,
     "y": 896,
     "mask": false
+  },
+  "emoji-⛩️": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 0,
+    "y": 960,
+    "mask": false
+  },
+  "emoji-🐟": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 64,
+    "y": 960,
+    "mask": false
+  },
+  "emoji-🏙️": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 128,
+    "y": 960,
+    "mask": false
+  },
+  "emoji-🏘️": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 192,
+    "y": 960,
+    "mask": false
+  },
+  "emoji-🌃": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 256,
+    "y": 960,
+    "mask": false
+  },
+  "emoji-🏗️": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 320,
+    "y": 960,
+    "mask": false
+  },
+  "emoji-🗿": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 384,
+    "y": 960,
+    "mask": false
+  },
+  "emoji-⛪": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 448,
+    "y": 960,
+    "mask": false
+  },
+  "emoji-🕌": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 512,
+    "y": 960,
+    "mask": false
+  },
+  "emoji-🏢": {
+    "height": 64,
+    "pixelRatio": 2,
+    "width": 64,
+    "x": 576,
+    "y": 960,
+    "mask": false
   }
 }

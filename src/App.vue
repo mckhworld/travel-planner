@@ -1180,12 +1180,11 @@ const initMap = () => {
         attributionControl: true
     })
 
-    // Load custom emoji sprite
-    map.setSprite('sprite')  // resolves to /sprite.json from Vite public/
-
     map.addControl(new MapLibre.AttributionControl({ compact: true }))
 
     map.on('load', () => {
+        // Set custom emoji sprite AFTER style loads (CartoDB style overrides sprite set before load)
+        map.setSprite('./sprite.json')
         // Add GeoJSON source for markers
         if (!map.getSource('markers')) {
             map.addSource('markers', {
