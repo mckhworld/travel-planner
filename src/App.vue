@@ -1171,11 +1171,16 @@ const cancelRenamePlan = () => { editingPlanId.value = null; editingPlanName.val
 const handleRenameBlur = (planId) => { if (editingPlanId.value === planId) doRenamePlan(planId) }
 const startRenamePlan = (plan) => { editingPlanId.value = plan.id; editingPlanName.value = plan.name }
 
-const initMap = () => {
+const initMap = async () => {
+    // Fetch CartoDB style and inject our custom sprite URL
+    const resp = await fetch('https://basemaps.cartocdn.com/gl/positron-gl-style/style.json')
+    const styleSpec = await resp.json()
+    styleSpec.sprite = './sprite'  // MapLibre resolves to ./sprite@2x.json or ./sprite.json
+
     map = new MapLibre.Map({
         container: 'map',
-        style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-        center: [139.3, 36.2],  // [lng, lat]
+        style: styleSpec,
+        center: [139.3, 36.2],
         zoom: 9,
         attributionControl: true
     })
@@ -1183,8 +1188,6 @@ const initMap = () => {
     map.addControl(new MapLibre.AttributionControl({ compact: true }))
 
     map.on('load', () => {
-        // Set custom emoji sprite AFTER style loads (CartoDB style overrides sprite set before load)
-        map.setSprite('./sprite.json')
         // Add GeoJSON source for markers
         if (!map.getSource('markers')) {
             map.addSource('markers', {
