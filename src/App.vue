@@ -1476,11 +1476,20 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .detail-link { display: inline-block; padding: 8px 14px; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-size: 12px; transition: background 0.2s; }
 .detail-link:hover { background: #5568d3; }
 #map { flex: 1; height: 100%; position: relative; z-index: 1; }
-#map .leaflet-tile-container { width: 100%; height: 100%; }
-.leaflet-popup-content { margin: 8px; font-size: 13px; }
-.leaflet-popup-content h3 { margin: 0 0 4px 0; font-size: 14px; }
-.leaflet-popup-content .region-badge, .leaflet-popup-content .type-badge { display: inline-block; padding: 2px 6px; border-radius: 10px; font-size: 10px; color: white; margin-right: 4px; }
-.leaflet-popup-content .popup-link { display: inline-block; margin-top: 6px; padding: 4px 10px; background: #667eea; color: white; text-decoration: none; border-radius: 4px; font-size: 11px; }
+.maplibregl-canvas { outline: none; }
+.maplibregl-popup-content {
+  padding: 8px !important;
+  font-size: 13px;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.maplibregl-popup-content h3 { margin: 0 0 4px 0; font-size: 14px; }
+.maplibregl-popup-content .region-badge,
+.maplibregl-popup-content .type-badge { display: inline-block; padding: 2px 6px; border-radius: 10px; font-size: 10px; color: white; margin-right: 4px; }
+.maplibregl-popup-content .popup-link { display: inline-block; margin-top: 6px; padding: 4px 10px; background: #667eea; color: white; text-decoration: none; border-radius: 4px; font-size: 11px; }
+.maplibregl-popup-tip { border-top-color: white !important; }
+.maplibregl-popup-close-button { font-size: 18px; right: 4px; top: 2px; }
+.maplibregl-ctrl-attrib a { color: rgba(0,0,0,0.75); }
 .emoji-picker-panel { position: absolute; top: 0; left: 720px; width: 300px; height: 100%; background: white; box-shadow: -4px 0 16px rgba(0,0,0,0.15); z-index: 1002; transform: translateX(100%); transition: transform 0.3s ease; overflow: hidden; pointer-events: none; visibility: hidden; opacity: 0; }
 .emoji-picker-panel.expanded { transform: translateX(0); pointer-events: auto; visibility: visible; opacity: 1; }
 .emoji-picker-content { padding: 12px; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
