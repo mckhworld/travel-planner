@@ -1442,8 +1442,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .add-group-form { display: flex; gap: 4px; }
 .add-group-form input { flex: 1; padding: 6px 8px; border: 1px solid #dee2e6; border-radius: 6px; font-size: 12px; }
 .add-group-form button { padding: 6px 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
-#detail-panel { position: absolute; top: 52px; left: 0; width: 320px; height: calc(100% - 52px); background: white; box-shadow: -2px 0 8px rgba(0,0,0,0.1); z-index: 1005; transform: translateX(-100%); transition: transform 0.3s ease; overflow: hidden; pointer-events: none; }
-#detail-panel.expanded { transform: translateX(400px); pointer-events: auto; }
+#detail-panel { position: absolute; top: 52px; left: 0; width: 320px; height: calc(100% - 52px); background: white; box-shadow: 2px 0 8px rgba(0,0,0,0.15); z-index: 1005; transform: translateX(-100%); transition: transform 0.3s ease; overflow: hidden; pointer-events: none; }
+#detail-panel.expanded { transform: translateX(0); pointer-events: auto; }
 .detail-content { padding: 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; height: 100%; }
 .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .detail-title { font-size: 16px; font-weight: bold; color: #333; }
