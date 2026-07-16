@@ -1293,39 +1293,47 @@ const onMarkerClick = (e) => {
 }
 
 const updateMarkers = () => {
-    const prevMarkerCount = Object.keys(markers).length
-    Object.values(markers).forEach(m => map.removeLayer(m))
-    markers = {}
-    if (pickMarker) { map.removeLayer(pickMarker); pickMarker = null }
+    if (!map) return
+
+    const features = []
+
     groups.value.forEach((group, gi) => {
         group.places.forEach((place, pi) => {
             if (!place.lat || !place.lng) return
             const typeInfo = PLACE_TYPES[place.type] || PLACE_TYPES['other']
-            const marker = L.marker([place.lat, place.lng], {
-                icon: L.divIcon({
-                    className: 'custom-marker',
-                    html: `<div style="background-color: ${typeInfo.color}; width: 28px; height: 28px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 14px;">${place.emoji || '📍'}</div>`,
-                    iconSize: [28, 28], iconAnchor: [14, 14]
-                })
-            }).addTo(map)
-            marker.bindPopup(`
-                <h3>${place.emoji || '📍'} ${place.name} ${!place.lat || !place.lng ? '🚫' : ''}</h3>
-                <span class="region-badge" style="background-color: ${getGroupColor(gi)}">${getRegionName(place.region)}</span>
-                <span class="type-badge" style="background-color: ${typeInfo.color}">${typeInfo.name}</span>
-                ${place.hours ? `<p style="margin-top: 6px; font-size: 12px;">🕐 ${place.hours}</p>` : ''}
-                <a href="${buildMapsLink(place)}" target="_blank" class="popup-link">📍 Google Maps</a>
-            `)
-            marker.on('click', () => { selectPlace(gi, pi, false); marker.openPopup() })
-            markers[place.id] = marker
+            const emoji = place.emoji || '📍'
+            features.push({
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [place.lng, place.lat]  // [lng, lat]
+                },
+                properties: {
+                    id: place.id,
+                    name: place.name || '未命名',
+                    emoji: emoji,
+                    icon: `emoji-${emoji}`,  // sprite key
+                    color: typeInfo.color,
+                    region: getRegionName(place.region),
+                    groupColor: getGroupColor(gi),
+                    hours: place.hours || '',
+                    groupIndex: gi,
+                    placeIndex: pi
+                }
+            })
         })
     })
-    const newMarkerCount = Object.keys(markers).length
-    if (prevMarkerCount !== newMarkerCount) {
-        const nonNullMarkers = Object.values(markers)
-        if (nonNullMarkers.length > 0) {
-            const group = L.featureGroup(nonNullMarkers)
-            map.fitBounds(group.getBounds().pad(0.1))
-        }
+
+    const source = map.getSource('markers')
+    if (source) {
+        source.setData({ type: 'FeatureCollection', features })
+    }
+
+    // Fit bounds when markers exist
+    if (features.length > 0) {
+        const bounds = new MapLibre.LngLatBounds()
+        features.forEach((f) => bounds.extend(f.geometry.coordinates))
+        map.fitBounds(bounds, { padding: 60, animate: false })
     }
 }
 
