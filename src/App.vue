@@ -609,6 +609,26 @@ const selectPlace = (gi, pi, centerMap = true) => {
     if (centerMap && map && place.lat && place.lng) {
         map.jumpTo({ center: [place.lng, place.lat], zoom: map.getZoom() })
     }
+    showMarkerPopup(gi, pi)
+}
+
+const showMarkerPopup = (gi, pi) => {
+    if (!map) return
+    if (popup) popup.remove()
+    const place = groups.value[gi]?.places[pi]
+    if (!place || !place.lat || !place.lng) return
+    const typeInfo = PLACE_TYPES[place?.type] || PLACE_TYPES['other']
+    const groupColor = getGroupColor(gi)
+    popup = new MapLibre.Popup({ offset: 25, maxWidth: '200px' })
+        .setLngLat([place.lng, place.lat])
+        .setHTML(`
+            <h3>${place.emoji || '📍'} ${place.name || '未命名'}</h3>
+            <span class="region-badge" style="background-color: ${groupColor}">${getRegionName(place.region)}</span>
+            <span class="type-badge" style="background-color: ${typeInfo.color}">${typeInfo.name}</span>
+            ${place.hours ? `<p style="margin-top: 6px; font-size: 12px;">🕐 ${place.hours}</p>` : ''}
+            <a href="${buildMapsLink(place)}" target="_blank" class="popup-link">📍 Google Maps</a>
+        `)
+        .addTo(map)
 }
 
 const closeDropdowns = () => {
@@ -1266,21 +1286,6 @@ const onMarkerClick = (e) => {
     const pi = props.placeIndex
 
     selectPlace(gi, pi, false)
-
-    // Show popup
-    if (popup) popup.remove()
-    const place = groups.value[gi]?.places[pi]
-    const typeInfo = PLACE_TYPES[place?.type] || PLACE_TYPES['other']
-    popup = new MapLibre.Popup({ offset: 25, maxWidth: '200px' })
-        .setLngLat(e.lngLat)
-        .setHTML(`
-            <h3>${props.emoji} ${props.name}</h3>
-            <span class="region-badge" style="background-color: ${props.groupColor}">${props.region}</span>
-            <span class="type-badge" style="background-color: ${props.color}">${typeInfo.name}</span>
-            ${props.hours ? `<p style="margin-top: 6px; font-size: 12px;">🕐 ${props.hours}</p>` : ''}
-            <a href="${buildMapsLink(place)}" target="_blank" class="popup-link">📍 Google Maps</a>
-        `)
-        .addTo(map)
 }
 
 const updateMarkers = () => {
