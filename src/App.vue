@@ -676,8 +676,11 @@ const selectArea = (value) => {
 const closeDetail = () => {
     selectedPlace.value = null
     mapPickMode.value = false
-    if (popup) { popup.remove(); popup = null }
     if (pickMarker) { pickMarker.remove(); pickMarker = null }
+}
+
+const closePopup = () => {
+    if (popup) { popup.remove(); popup = null }
 }
 
 const enableMapPick = () => {
@@ -1273,6 +1276,7 @@ const initMap = async () => {
             mapPickMode.value = false
         } else {
             closeDetail()
+            closePopup()
         }
     })
 }
