@@ -606,20 +606,8 @@ const selectPlace = (gi, pi, centerMap = true) => {
         const el = document.querySelector(`.place-item[data-place-id="${place.id}"]`)
         if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
     })
-    const marker = markers[place.id]
-    if (marker) {
-        if (centerMap) {
-            if (isMobile.value) {
-                const panelBottom = 60 * window.innerHeight / 100
-                const visibleCenterY = (panelBottom + window.innerHeight) / 2
-                const containerWidth = map.getSize().x
-                const targetLatLng = map.containerPointToLatLng([containerWidth / 2, visibleCenterY])
-                map.setView(targetLatLng, map.getZoom(), { animate: false })
-            } else {
-                map.setView([place.lat, place.lng], map.getZoom(), { animate: false })
-            }
-        }
-        setTimeout(() => { if (markers[place.id]) markers[place.id].openPopup() }, 50)
+    if (centerMap && map && place.lat && place.lng) {
+        map.jumpTo({ center: [place.lng, place.lat], zoom: map.getZoom() })
     }
 }
 
@@ -668,16 +656,17 @@ const selectArea = (value) => {
 const closeDetail = () => {
     selectedPlace.value = null
     mapPickMode.value = false
-    if (pickMarker) { map.removeLayer(pickMarker); pickMarker = null }
+    if (popup) { popup.remove(); popup = null }
+    if (pickMarker) { pickMarker.remove(); pickMarker = null }
 }
 
 const enableMapPick = () => {
     mapPickMode.value = !mapPickMode.value
-    if (mapPickMode.value) {
-        map.getContainer().style.cursor = 'crosshair'
+    if (mapPickMode.value && map) {
+        map.getCanvas().style.cursor = 'crosshair'
     } else {
-        map.getContainer().style.cursor = ''
-        if (pickMarker) { map.removeLayer(pickMarker); pickMarker = null }
+        if (map) map.getCanvas().style.cursor = ''
+        if (pickMarker) { pickMarker.remove(); pickMarker = null }
     }
 }
 
@@ -1376,9 +1365,7 @@ onMounted(() => {
     refreshPlanRefs()
     initialSnapshot = getDirtyState()
     initMap()
-    setTimeout(() => { map.invalidateSize() }, 200)
-    setTimeout(() => { map.invalidateSize() }, 1000)
-    setTimeout(() => { updateMarkers() }, 200)
+    // No invalidateSize needed — MapLibre handles resize automatically
     document.addEventListener('click', () => { hasInteracted = true }, { once: true })
     window.addEventListener('resize', checkMobile)
     window.addEventListener('beforeunload', (e) => {
@@ -1389,7 +1376,13 @@ onMounted(() => {
     })
 })
 
-onUnmounted(() => { window.removeEventListener('resize', checkMobile) })
+onUnmounted(() => {
+    window.removeEventListener('resize', checkMobile)
+    if (map) {
+        map.remove()  // Properly destroy MapLibre map instance
+        map = null
+    }
+})
 </script>
 
 <style>
