@@ -404,6 +404,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, reactive, nextTick } from 'vue'
+import MapLibre from 'maplibre-gl'
 import { PLACE_TYPES, REGION_NAMES, COMMON_EMOJIS, REGION_COLOR_PALETTE } from './data/constants.js'
 import { createDefaultData } from './data/default-data.js'
 import { getRegionName, buildMapsLink, formatDate, updateGroupModified, updatePlanModified } from './utils/helpers.js'
@@ -461,9 +462,9 @@ const driveExportFilename = ref('')
 const driveExportExistingFiles = ref([])
 const selectedOverwriteFile = ref(null)
 
-let map = null
-let markers = {}
-let pickMarker = null
+let map: MapLibre.Map | null = null
+let popup: MapLibre.Popup | null = null
+let pickMarker: MapLibre.Marker | null = null
 
 const currentPlace = computed(() => {
     const sp = selectedPlace.value
@@ -1182,41 +1183,113 @@ const handleRenameBlur = (planId) => { if (editingPlanId.value === planId) doRen
 const startRenamePlan = (plan) => { editingPlanId.value = plan.id; editingPlanName.value = plan.name }
 
 const initMap = () => {
-    const mapEl = document.getElementById('map')
-    map = L.map('map', { preferCanvas: false, zoomAnimation: false, markerZoomAnimation: false })
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map)
-    map.setView([36.2, 139.3], 9)
-    const fixTileContainer = () => {
-        const tc = mapEl.querySelector('.leaflet-tile-container')
-        if (tc) {
-            tc.style.width = mapEl.offsetWidth + 'px'
-            tc.style.height = mapEl.offsetHeight + 'px'
-            tc.style.position = 'absolute'
-            tc.style.top = '0'
-            tc.style.left = '0'
-        }
-    }
-    setTimeout(() => { map.invalidateSize(); fixTileContainer() }, 100)
-    setTimeout(() => { map.invalidateSize(); fixTileContainer() }, 500)
-    setTimeout(() => { map.invalidateSize(); fixTileContainer() }, 1000)
-    map.on('click', (e) => {
-        if (mapPickMode.value && currentPlace.value) {
-            currentPlace.value.lat = e.latlng.lat
-            currentPlace.value.lng = e.latlng.lng
-            updateMarkers()
-            if (pickMarker) map.removeLayer(pickMarker)
-            pickMarker = L.marker([e.latlng.lat, e.latlng.lng], {
-                icon: L.divIcon({
-                    className: 'pick-marker',
-                    html: '<div style="background-color: #667eea; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4);"></div>',
-                    iconSize: [20, 20], iconAnchor: [10, 10]
-                })
-            }).addTo(map)
-            mapPickMode.value = false
-        } else { closeDetail() }
+    map = new MapLibre.Map({
+        container: 'map',
+        style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+        center: [139.3, 36.2],  // [lng, lat]
+        zoom: 9,
+        attributionControl: true
     })
+
+    // Load custom emoji sprite
+    map.setSprite('sprite')  // resolves to /sprite.json from Vite public/
+
+    map.addControl(new MapLibre.AttributionControl({ compact: true }))
+
+    map.on('load', () => {
+        // Add GeoJSON source for markers
+        if (!map.getSource('markers')) {
+            map.addSource('markers', {
+                type: 'geojson',
+                data: { type: 'FeatureCollection', features: [] }
+            })
+        }
+
+        // Circle layer (colored dot background)
+        map.addLayer({
+            id: 'marker-circles',
+            type: 'circle',
+            source: 'markers',
+            paint: {
+                'circle-radius': 16,
+                'circle-color': ['get', 'color'],
+                'circle-stroke-width': 3,
+                'circle-stroke-color': '#ffffff',
+                'circle-blur': 0
+            }
+        })
+
+        // Icon layer (emoji sprite overlay)
+        map.addLayer({
+            id: 'marker-icons',
+            type: 'symbol',
+            source: 'markers',
+            layout: {
+                'icon-image': ['get', 'icon'],
+                'icon-size': 0.6,
+                'icon-allow-overlap': false,
+                'icon-ignore-placement': true
+            }
+        })
+
+        // Marker click handlers
+        map.on('click', 'marker-circles', onMarkerClick)
+        map.on('click', 'marker-icons', onMarkerClick)
+
+        // Cursor hover
+        map.on('mouseenter', 'marker-circles', () => { map.getCanvas().style.cursor = 'pointer' })
+        map.on('mouseleave', 'marker-circles', () => { map.getCanvas().style.cursor = '' })
+        map.on('mouseenter', 'marker-icons', () => { map.getCanvas().style.cursor = 'pointer' })
+        map.on('mouseleave', 'marker-icons', () => { map.getCanvas().style.cursor = '' })
+
+        updateMarkers()
+    })
+
+    // Map click → pick coordinate or close detail
+    map.on('click', (e) => {
+        // Check if click was on a marker
+        const features = map.queryRenderedFeatures(e.point, { layers: ['marker-circles', 'marker-icons'] })
+        if (features.length > 0) return  // let marker handler deal with it
+
+        if (mapPickMode.value && currentPlace.value) {
+            currentPlace.value.lat = e.lngLat.lat
+            currentPlace.value.lng = e.lngLat.lng
+            updateMarkers()
+            if (pickMarker) pickMarker.remove()
+            pickMarker = new MapLibre.Marker({ color: '#667eea', scale: 0.5 })
+                .setLngLat(e.lngLat)
+                .addTo(map)
+            mapPickMode.value = false
+        } else {
+            closeDetail()
+        }
+    })
+}
+
+// Marker click handler
+const onMarkerClick = (e) => {
+    const props = e.features?.[0]?.properties
+    if (!props) return
+
+    const gi = props.groupIndex
+    const pi = props.placeIndex
+
+    selectPlace(gi, pi, false)
+
+    // Show popup
+    if (popup) popup.remove()
+    const place = groups.value[gi]?.places[pi]
+    const typeInfo = PLACE_TYPES[place?.type] || PLACE_TYPES['other']
+    popup = new MapLibre.Popup({ offset: 25, maxWidth: '200px' })
+        .setLngLat(e.lngLat)
+        .setHTML(`
+            <h3>${props.emoji} ${props.name}</h3>
+            <span class="region-badge" style="background-color: ${props.groupColor}">${props.region}</span>
+            <span class="type-badge" style="background-color: ${props.color}">${typeInfo.name}</span>
+            ${props.hours ? `<p style="margin-top: 6px; font-size: 12px;">🕐 ${props.hours}</p>` : ''}
+            <a href="${buildMapsLink(place)}" target="_blank" class="popup-link">📍 Google Maps</a>
+        `)
+        .addTo(map)
 }
 
 const updateMarkers = () => {
