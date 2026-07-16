@@ -462,9 +462,9 @@ const driveExportFilename = ref('')
 const driveExportExistingFiles = ref([])
 const selectedOverwriteFile = ref(null)
 
-let map: MapLibre.Map | null = null
-let popup: MapLibre.Popup | null = null
-let pickMarker: MapLibre.Marker | null = null
+let map = null
+let popup = null
+let pickMarker = null
 
 const currentPlace = computed(() => {
     const sp = selectedPlace.value
