@@ -597,7 +597,6 @@ const toggleMobileSidebar = () => {
 }
 
 const selectPlace = (gi, pi, centerMap = true) => {
-    selectedPlace.value = { groupIndex: gi, placeIndex: pi }
     const place = groups.value[gi].places[pi]
     dropdownVisibility[place.id + '_region'] = false
     dropdownVisibility[place.id + '_area'] = false
@@ -612,6 +611,11 @@ const selectPlace = (gi, pi, centerMap = true) => {
     showMarkerPopup(gi, pi)
 }
 
+const openDetailPanel = (gi, pi) => {
+    selectedPlace.value = { groupIndex: gi, placeIndex: pi }
+    if (popup) popup.toggle()
+}
+
 const showMarkerPopup = (gi, pi) => {
     if (!map) return
     if (popup) popup.remove()
@@ -619,16 +623,26 @@ const showMarkerPopup = (gi, pi) => {
     if (!place || !place.lat || !place.lng) return
     const typeInfo = PLACE_TYPES[place?.type] || PLACE_TYPES['other']
     const groupColor = getGroupColor(gi)
-    popup = new MapLibre.Popup({ offset: 25, maxWidth: '200px' })
+    popup = new MapLibre.Popup({ offset: 25, maxWidth: '220px' })
         .setLngLat([place.lng, place.lat])
         .setHTML(`
             <h3>${place.emoji || '📍'} ${place.name || '未命名'}</h3>
             <span class="region-badge" style="background-color: ${groupColor}">${getRegionName(place.region)}</span>
             <span class="type-badge" style="background-color: ${typeInfo.color}">${typeInfo.name}</span>
             ${place.hours ? `<p style="margin-top: 6px; font-size: 12px;">🕐 ${place.hours}</p>` : ''}
-            <a href="${buildMapsLink(place)}" target="_blank" class="popup-link">📍 Google Maps</a>
+            <button class="popup-btn popup-btn-detail">📝 詳情</button>
+            <a href="${buildMapsLink(place)}" target="_blank" class="popup-btn popup-btn-maps">📍 Google Maps</a>
         `)
         .addTo(map)
+    popup.on('open', () => {
+        const btn = popup.getElement()?.querySelector('.popup-btn-detail')
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation()
+                openDetailPanel(gi, pi)
+            })
+        }
+    })
 }
 
 const closeDropdowns = () => {
@@ -1498,6 +1512,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .maplibregl-popup-content .region-badge,
 .maplibregl-popup-content .type-badge { display: inline-block; padding: 2px 6px; border-radius: 10px; font-size: 10px; color: white; margin-right: 4px; }
 .maplibregl-popup-content .popup-link { display: inline-block; margin-top: 6px; padding: 4px 10px; background: #667eea; color: white; text-decoration: none; border-radius: 4px; font-size: 11px; }
+.maplibregl-popup-content .popup-btn { display: inline-block; margin-top: 6px; padding: 4px 10px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; color: white; }
+.popup-btn-detail { background: #f39c12; }
+.popup-btn-detail:hover { background: #e67e22; }
+.popup-btn-maps { background: #667eea; text-decoration: none; margin-left: 4px; }
 .maplibregl-popup-tip { border-top-color: white !important; }
 .maplibregl-popup-close-button { font-size: 18px; right: 4px; top: 2px; }
 .maplibregl-ctrl-attrib a { color: rgba(0,0,0,0.75); }
@@ -1555,7 +1573,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     #map { flex: 1; height: calc(100vh - 52px); width: 100%; z-index: 1; }
     #map.pick-mode { z-index: 1003; }
     #detail-panel.expanded + #map.pick-mode { opacity: 0.7; z-index: 1002; }
-    #detail-panel { position: fixed; top: 52px; left: 0; width: 100%; height: calc(60vh - 52px); max-height: calc(60vh - 52px); z-index: 1001; transform: translateY(-100%); transition: transform 0.3s ease; border-radius: 0 0 16px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); pointer-events: none; }
+    #detail-panel { position: fixed; top: 52px; left: 0; width: 100%; height: calc(66vh - 52px); max-height: calc(66vh - 52px); z-index: 1001; transform: translateY(-100%); transition: transform 0.3s ease; border-radius: 0 0 16px 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); pointer-events: none; }
     #detail-panel.expanded { transform: translateY(0); pointer-events: auto; }
     #detail-panel.mobile-hidden { transform: translateY(-100%) !important; pointer-events: none !important; }
     #map { z-index: 1; }
