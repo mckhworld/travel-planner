@@ -1203,11 +1203,9 @@ const handleRenameBlur = (planId) => { if (editingPlanId.value === planId) doRen
 const startRenamePlan = (plan) => { editingPlanId.value = plan.id; editingPlanName.value = plan.name }
 
 const initMap = async () => {
-    // Fetch CartoDB style and inject our custom sprite URL
+    // Fetch CartoDB style
     const resp = await fetch('https://basemaps.cartocdn.com/gl/positron-gl-style/style.json')
     const styleSpec = await resp.json()
-    const spriteUrl = `${window.location.origin}${window.location.pathname}sprite`
-    styleSpec.sprite = spriteUrl
 
     map = new MapLibre.Map({
         container: 'map',
@@ -1301,27 +1299,55 @@ const onMarkerClick = (e) => {
     selectPlace(gi, pi, false)
 }
 
-const updateMarkers = () => {
+const emojiCache = new Set()
+
+const getTwemojiUrl = (emoji) => {
+    const codePoints = [...emoji].map(c => c.codePointAt(0).toString(16).padStart(4, '0'))
+        .filter(cp => cp !== 'fe0f')
+    return `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/${codePoints.join('-')}.png`
+}
+
+const loadEmojiImage = async (emoji) => {
+    const key = `emoji-${emoji}`
+    if (emojiCache.has(key)) return
+    try {
+        const resp = await fetch(getTwemojiUrl(emoji))
+        const blob = await resp.blob()
+        const url = URL.createObjectURL(blob)
+        const result = await map.loadImage(url)
+        if (!map.hasImage(key)) {
+            map.addImage(key, result.data)
+        }
+        emojiCache.add(key)
+        URL.revokeObjectURL(url)
+    } catch {
+        emojiCache.delete(key)
+    }
+}
+
+const updateMarkers = async () => {
     if (!map) return
 
     const features = []
+    const emojis = new Set()
 
     groups.value.forEach((group, gi) => {
         group.places.forEach((place, pi) => {
             if (!place.lat || !place.lng) return
             const typeInfo = PLACE_TYPES[place.type] || PLACE_TYPES['other']
             const emoji = place.emoji || '📍'
+            emojis.add(emoji)
             features.push({
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
-                    coordinates: [place.lng, place.lat]  // [lng, lat]
+                    coordinates: [place.lng, place.lat]
                 },
                 properties: {
                     id: place.id,
                     name: place.name || '未命名',
                     emoji: emoji,
-                    icon: `emoji-${emoji}`,  // sprite key
+                    icon: `emoji-${emoji}`,
                     color: typeInfo.color,
                     region: getRegionName(place.region),
                     groupColor: getGroupColor(gi),
@@ -1332,6 +1358,9 @@ const updateMarkers = () => {
             })
         })
     })
+
+    // Load missing emoji images
+    await Promise.all([...emojis].map(e => loadEmojiImage(e)))
 
     const source = map.getSource('markers')
     if (source) {
