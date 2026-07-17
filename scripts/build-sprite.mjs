@@ -97,7 +97,15 @@ emojiList.forEach((emoji, i) => {
 const jsonPath = resolve(__dirname, '../public/sprite.json')
 writeFileSync(jsonPath, JSON.stringify(sprite, null, 2) + '\n')
 
+// Also write @2x variants for MapLibre retina resolution
+const png2xPath = resolve(__dirname, '../public/sprite@2x.png')
+const json2xPath = resolve(__dirname, '../public/sprite@2x.json')
+writeFileSync(png2xPath, canvas.toBuffer('image/png'))
+writeFileSync(json2xPath, JSON.stringify(sprite, null, 2) + '\n')
+
 console.log(`✅ Sprite generated: ${emojiList.length} unique emoji`)
 console.log(`   PNG: ${outputPath} (${COLS * ICON_SIZE}×${ROWS * ICON_SIZE}px @${SCALE}x)`)
 console.log(`   JSON: ${jsonPath}`)
+console.log(`   @2x PNG: ${png2xPath}`)
+console.log(`   @2x JSON: ${json2xPath}`)
 console.log(`   Icons: ${Object.keys(sprite).length}`)

@@ -598,7 +598,9 @@ const toggleMobileSidebar = () => {
 
 const selectPlace = (gi, pi, centerMap = true) => {
     const place = groups.value[gi].places[pi]
-    if (selectedPlace.value) closeDetail()
+    if (selectedPlace.value) {
+        selectedPlace.value = { groupIndex: gi, placeIndex: pi }
+    }
     dropdownVisibility[place.id + '_region'] = false
     dropdownVisibility[place.id + '_area'] = false
     if (isMobile.value) mobileSidebarOpen.value = false
@@ -1204,7 +1206,8 @@ const initMap = async () => {
     // Fetch CartoDB style and inject our custom sprite URL
     const resp = await fetch('https://basemaps.cartocdn.com/gl/positron-gl-style/style.json')
     const styleSpec = await resp.json()
-    styleSpec.sprite = './sprite'  // MapLibre resolves to ./sprite@2x.json or ./sprite.json
+    const spriteUrl = `${window.location.origin}${window.location.pathname}sprite`
+    styleSpec.sprite = spriteUrl
 
     map = new MapLibre.Map({
         container: 'map',
@@ -1353,13 +1356,6 @@ watch(groups, () => {
     if (plansData) saveToLocalStorage(plansData, currentPlanIdVal.value, groups.value)
     initialSnapshot = getDirtyState()
 }, { deep: true })
-
-watch(selectedPlace, (newVal) => {
-    if (newVal && popup) {
-        popup.remove()
-        popup = null
-    }
-})
 
 let hasInteracted = false
 let initialSnapshot = ''
