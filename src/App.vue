@@ -598,6 +598,7 @@ const toggleMobileSidebar = () => {
 
 const selectPlace = (gi, pi, centerMap = true) => {
     const place = groups.value[gi].places[pi]
+    if (selectedPlace.value) closeDetail()
     dropdownVisibility[place.id + '_region'] = false
     dropdownVisibility[place.id + '_area'] = false
     if (isMobile.value) mobileSidebarOpen.value = false
@@ -613,8 +614,8 @@ const selectPlace = (gi, pi, centerMap = true) => {
 
 const openDetailPanel = (gi, pi) => {
     selectedPlace.value = { groupIndex: gi, placeIndex: pi }
-    if (popup) popup.toggle()
 }
+window.__openDetailPanel = openDetailPanel
 
 const showMarkerPopup = (gi, pi) => {
     if (!map) return
@@ -630,19 +631,10 @@ const showMarkerPopup = (gi, pi) => {
             <span class="region-badge" style="background-color: ${groupColor}">${getRegionName(place.region)}</span>
             <span class="type-badge" style="background-color: ${typeInfo.color}">${typeInfo.name}</span>
             ${place.hours ? `<p style="margin-top: 6px; font-size: 12px;">🕐 ${place.hours}</p>` : ''}
-            <button class="popup-btn popup-btn-detail">📝 詳情</button>
+            <button class="popup-btn popup-btn-detail" onclick="window.__openDetailPanel(${gi}, ${pi})">📝 詳情</button>
             <a href="${buildMapsLink(place)}" target="_blank" class="popup-btn popup-btn-maps">📍 Google Maps</a>
         `)
         .addTo(map)
-    popup.on('open', () => {
-        const btn = popup.getElement()?.querySelector('.popup-btn-detail')
-        if (btn) {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation()
-                openDetailPanel(gi, pi)
-            })
-        }
-    })
 }
 
 const closeDropdowns = () => {
@@ -1361,6 +1353,13 @@ watch(groups, () => {
     if (plansData) saveToLocalStorage(plansData, currentPlanIdVal.value, groups.value)
     initialSnapshot = getDirtyState()
 }, { deep: true })
+
+watch(selectedPlace, (newVal) => {
+    if (newVal && popup) {
+        popup.remove()
+        popup = null
+    }
+})
 
 let hasInteracted = false
 let initialSnapshot = ''
